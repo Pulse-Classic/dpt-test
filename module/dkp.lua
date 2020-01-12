@@ -7,8 +7,6 @@ local _, ns = ...;
 SlashCmdList.PULSE_DKP = function (msg)
 	local _, _, cmd, args = string.find(msg, "%s?(%w+)%s?(.*)");
 
-	temp = {};
-
 	if (cmd == 'roll' or cmd == 'roll2' or cmd == 'roll3' or cmd == 'roll4' or cmd == 'roll5') then
 		temp.cmd = cmd;
 
@@ -35,21 +33,22 @@ SlashCmdList.PULSE_DKP = function (msg)
 		temp.chars = ns:getRaidMembers();
 		KethoEditBox_Show(json.encode(temp));
 	elseif (cmd == 'donate' or cmd == 'loot') then
-		temp.cmd = cmd;
-
-		local _, _, item, char = string.find(args, "(.*)%s(%w+)");
+		
+		local _, _, item, charLink = string.find(args, "(.*)%s(%w+)");
 		if (string.sub(item, 0, 1) ~= '|') then
-			_, _, char, item = string.find(args, "(%w+)%s(.*)");
+			_, _, charLink, item = string.find(args, "(%w+)%s(.*)");
 		end
 		if (cmd == 'loot') then
-			SendChatMessage(char .. ' wins ' .. item .. ' Congrats!', RAID);
+			SendChatMessage(charLink .. ' wins ' .. item .. ' Congrats!', RAID);
 		end
 		local itemString, itemName = item:match("|H(.*)|h%[(.*)%]|h");
-		temp.itemString = itemString;
-		temp.itemName = itemName;
-		temp.char = char;
-
-		KethoEditBox_Show(json.encode(temp));
+		
+		local itemObj={};
+		itemObj.name,itemObj.link, itemObj.rarity, itemObj.level, itemObj.minLevel, itemObj.type, itemObj.subType,
+		itemObj.stackCount, itemObj.equipLoc, itemObj.texture, itemObj.sellPrice =GetItemInfo(itemName);
+		print(itemObj);
+		ns:DistributeLoot(itemObj,charLink);
+		-- KethoEditBox_Show(json.encode(temp));
 	elseif cmd == 'create' then
 		ns:CreateRaid(msg,args);
 
@@ -68,8 +67,8 @@ SlashCmdList.PULSE_DKP = function (msg)
 	elseif cmd == 'drop' then
 		local itemString, itemName = args:match("|H(.*)|h%[(.*)%]|h");
 		item={};
-		item.itemString=itemString;
-		item.name=itemName;
+		itemObj.itemString=itemString;
+		itemObj.name=itemName;
 		ns:AddDrop(msg,item);
 	elseif (cmd == 'kill' or cmd == 'wipe') then
 		temp.npc = args;
@@ -132,7 +131,7 @@ function ns:CreateRaid(msg, args)
 	newRaid.startedOn=nil;
 	Pulse_DKP.raids[newRaid.index]= newRaid;
 	temp=newRaid;
-	ns:ListRaids();
+	-- ns:ListRaids();
 end
 
 function ns:StartRaid()
@@ -153,7 +152,7 @@ function ns:StartRaid()
 
 	temp.startedOn=date("!%Y-%m-%d %H:%M");
 	Pulse_DKP.raids[temp.index]=temp;
-	ns:ListRaids();
+	-- ns:ListRaids();
 end
 
 function ns:AddDrop(msg, item)
@@ -182,7 +181,23 @@ function ns:AddDrop(msg, item)
 	print('added drop');
 
 end
+function ns:DistributeLoot(item, winner)
+	if temp==nil then
+		return;
+	end
 
+	if temp.lootWinners == nil then
+		temp.lootWinners={};
+	end
+	local lootWinner={};
+	lootWinner.item=item;
+	lootWinner.chars=winner;
+
+	tinsert(temp.lootWinners, lootWinner);
+	Pulse_DKP.raids[temp.index]=temp;
+	print('Loot distributed');
+
+end
 function ns:EndRaid(msg)
 	if temp==nil then
 		return;
@@ -223,10 +238,9 @@ function ns:dkpLootOpen ()
 	if(info ~= nil) then 
 		for i = 1, #info do
 			local item={};
-	item.name,item.link, item.rarity, item.level, item.minLevel, item.type, item.subType,
-	item.stackCount, item.equipLoc, item.texture, item.sellPrice =GetItemInfo(info[i].item);
-	
-	ns:AddDrop(nil, item);
+			itemObj.name,itemObj.link, itemObj.rarity, itemObj.level, itemObj.minLevel, itemObj.type, itemObj.subType,
+			itemObj.stackCount, itemObj.equipLoc, itemObj.texture, itemObj.sellPrice =GetItemInfo(info[i].item);
+			ns:AddDrop(nil, item);
 		end		
 	end
 	-- local json = _G['json'];
