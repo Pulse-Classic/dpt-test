@@ -5,10 +5,12 @@ local _, ns = ...;
 function ns:init ()
 	if ((Pulse_DKP == nil) or (Pulse_DKP.version < 1)) then
 		Pulse_DKP = {};
-	end	
+	end
 	Pulse_DKP.version = 1;
 end
+
 frame:RegisterEvent('PLAYER_LOGIN');
+
 frame:SetScript('OnEvent', function (self, event, ...)
 	if (event == 'PLAYER_LOGIN') then
 		ns:init();
@@ -16,6 +18,7 @@ frame:SetScript('OnEvent', function (self, event, ...)
 		frame:SetScript('OnEvent', function (self, event, bagId)
 			if (event == 'LOOT_READY') then
 				ns:dkpLootOpen();
+				ns:testLootOpen();
 			end
 		end);
 	end

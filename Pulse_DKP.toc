@@ -12,4 +12,5 @@ xml\frame.xml
 xml\frame.lua
 init.lua
 module\dkp.lua
+module\storage_test.lua
 pulse_dkp.lua
