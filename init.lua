@@ -1,7 +1,7 @@
 
 local frame = CreateFrame('Frame');
 
-function initPulse ()
+function initPulseDkp ()
 	if ((Pulse_DKP == nil) or (Pulse_DKP.version < 1)) then
 		Pulse_DKP = {};
 	end
@@ -12,7 +12,7 @@ end
 frame:SetScript('OnEvent', function (self, event, ...)
 	if (event == 'PLAYER_LOGIN') then
 
-		initPulse();
+		initPulseDkp();
 		frame:RegisterEvent('LOOT_READY');
 
 		frame:SetScript('OnEvent', function (self, event, bagId)
