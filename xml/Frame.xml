@@ -64,18 +64,18 @@
 					</Layer>
 				</Layers>
 				<Frames>
-					<Button name="PD_NewRaidButton" inherits="UIPanelButtonTemplate" text="Start new raid">
+					<Button name="PD_NewRaidButton" inherits="UIPanelButtonTemplate" text="Create new raid">
 						<Size x="87" y="23" />
 						<Anchors>
 							<Anchor point="TOPLEFT" x="96" y="-77" />
 						</Anchors>
 						<Scripts>
 							<OnClick>
-								print('nwe raid');
+								PD_CreateRaid();
 							</OnClick>
 						</Scripts>
 					</Button>
-					<EditBox inherits="InputBoxTemplate" autoFocus="false">
+					<EditBox inherits="InputBoxTemplate" autoFocus="false" name="PD_NewRaidName">
 						<Size x="163" y="32" />
 						<Anchors>
 							<Anchor point="TOPLEFT" x="23" y="-43" />
@@ -84,7 +84,6 @@
 				</Frames>
 				<Scripts>
 					<OnLoad>
-						Frame13_OnLoad()
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -108,7 +107,7 @@
 								<Anchor point="TOPLEFT" x="21" y="-23" />
 							</Anchors>
 						</FontString>
-						<FontString inherits="GameFontNormal" text="Raid date" justifyH="LEFT">
+						<FontString inherits="GameFontNormal" text="Raid date" justifyH="LEFT" >
 							<Size x="80" y="20" />
 							<Anchors>
 								<Anchor point="TOPLEFT" x="21" y="-80" />

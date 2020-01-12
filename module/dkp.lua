@@ -108,7 +108,7 @@ function ns:getRaidMembers ()
 	return temp;
 end
 
-function ns:CreateRaid(msg, args)
+function ns:CreateRaid(msg, args)	
 	if args == nil or string.len(args)<2 then
 		print('A raid cannot be started without a name. A minimum of two characters is required. To include whitespaces, wrap your name in \'. For example: /pulse start \'Mc trash\'');
 		return;
@@ -200,7 +200,9 @@ function ns:ListRaids()
 	KethoEditBox_Show(json.encode(Pulse_DKP.raids));
 end
 
-
+function ns:GetCurrentRaid()
+	return temp;
+end
 
 function ns:dkpLootOpen ()
 	local name = GetUnitName('target');
