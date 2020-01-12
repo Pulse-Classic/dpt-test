@@ -82,13 +82,18 @@ SlashCmdList.PULSE_DKP = function (msg)
 				temp.chars[i].name, temp.chars[i].rank = GetRaidRosterInfo(i);
 			end
 		end
-
-	else
-		-- print('Unknown command.');
-		PulseDkpUi_Show('show me the money');
+	elseif (cmd=='close') then
+		ns:PD_CloseMainFrame();
+	else		
+		ns:PD_OpenMainFrame();
 	end
 end
-
+function ns:PD_OpenMainFrame()
+	PD_MainFrame:Show();
+end
+function ns:PD_CloseMainFrame()
+	PD_MainFrame:Hide();
+end
 function ns:getRaidMembers ()
 	local temp = {};
 	for i = 1, 40 do

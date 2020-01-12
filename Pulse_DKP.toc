@@ -8,6 +8,8 @@
 
 plugin\textbox.lua
 plugin\json.lua
+xml\frame.xml
+xml\frame.lua
 init.lua
 module\dkp.lua
 pulse_dkp.lua
