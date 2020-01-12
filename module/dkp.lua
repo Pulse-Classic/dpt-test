@@ -2,11 +2,16 @@ local json = _G['json'];
 local temp = {};
 local realm = GetRealmName();
 local char = UnitName('player');
+local _, ns = ...;
 
 SlashCmdList.PULSE_DKP = function (msg)
 	local _, _, cmd, args = string.find(msg, "%s?(%w+)%s?(.*)");
 
+	temp = {};
+
 	if (cmd == 'roll' or cmd == 'roll2' or cmd == 'roll3' or cmd == 'roll4' or cmd == 'roll5') then
+		temp.cmd = cmd;
+
 		local itemString, itemName = args:match("|H(.*)|h%[(.*)%]|h");
 
 		if (cmd == 'roll') then
@@ -27,9 +32,11 @@ SlashCmdList.PULSE_DKP = function (msg)
 
 		temp.itemString = itemString;
 		temp.itemName = itemName;
-		temp.chars = getRaidMembers();
+		temp.chars = ns:getRaidMembers();
 		KethoEditBox_Show(json.encode(temp));
 	elseif (cmd == 'donate' or cmd == 'loot') then
+		temp.cmd = cmd;
+
 		local _, _, item, char = string.find(args, "(.*)%s(%w+)");
 		if (string.sub(item, 0, 1) ~= '|') then
 			_, _, char, item = string.find(args, "(%w+)%s(.*)");
@@ -42,28 +49,28 @@ SlashCmdList.PULSE_DKP = function (msg)
 		temp.itemName = itemName;
 		temp.char = char;
 
-
+		KethoEditBox_Show(json.encode(temp));
 	elseif cmd == 'create' then
-		CreateRaid(msg,args);
+		ns:CreateRaid(msg,args);
 
 	elseif cmd == 'start' then
-		StartRaid();
+		ns:StartRaid();
 
 	elseif cmd == 'end'then
-		EndRaid(msg);
+		ns:EndRaid(msg);
 
 	elseif cmd == 'clearraids' then
-		ClearRaids();
+		ns:ClearRaids();
 
 	elseif cmd == 'listraids' then
-		ListRaids();
+		ns:ListRaids();
 
 	elseif cmd == 'drop' then
 		local itemString, itemName = args:match("|H(.*)|h%[(.*)%]|h");
 		item={};
 		item.itemString=itemString;
 		item.name=itemName;
-		AddDrop(msg,item);
+		ns:AddDrop(msg,item);
 	elseif (cmd == 'kill' or cmd == 'wipe') then
 		temp.npc = args;
 		temp.chars = {};
@@ -82,7 +89,7 @@ SlashCmdList.PULSE_DKP = function (msg)
 	end
 end
 
-function getRaidMembers ()
+function ns:getRaidMembers ()
 	local temp = {};
 	for i = 1, 40 do
 		local char = {};
@@ -96,7 +103,7 @@ function getRaidMembers ()
 	return temp;
 end
 
-function CreateRaid(msg, args)
+function ns:CreateRaid(msg, args)
 	if args == nil or string.len(args)<2 then
 		print('A raid cannot be started without a name. A minimum of two characters is required. To include whitespaces, wrap your name in \'. For example: /pulse start \'Mc trash\'');
 		return;
@@ -112,10 +119,10 @@ function CreateRaid(msg, args)
 	newRaid.startedOn=nil;
 	Pulse_DKP.raids[newRaid.index]= newRaid;
 	temp=newRaid;
-	ListRaids();
+	ns:ListRaids();
 end
 
-function StartRaid()
+function ns:StartRaid()
 	if temp==nil then
 		return;
 	end
@@ -133,10 +140,10 @@ function StartRaid()
 
 	temp.startedOn=date("!%Y-%m-%d %H:%M");
 	Pulse_DKP.raids[temp.index]=temp;
-	ListRaids();
+	ns:ListRaids();
 end
 
-function AddDrop(msg, item)
+function ns:AddDrop(msg, item)
 	if temp==nil then
 		return;
 	end
@@ -163,7 +170,7 @@ function AddDrop(msg, item)
 
 end
 
-function EndRaid(msg)
+function ns:EndRaid(msg)
 	if temp==nil then
 		return;
 	end
@@ -181,16 +188,16 @@ function EndRaid(msg)
 	print('ending raid');
 	temp=nil;
 end
-function ClearRaids()
+function ns:ClearRaids()
 	Pulse_DKP.raids={};
 end
-function ListRaids()
+function ns:ListRaids()
 	KethoEditBox_Show(json.encode(Pulse_DKP.raids));
 end
 
 
 
-function dkpLootOpen ()
+function ns:dkpLootOpen ()
 	local name = GetUnitName('target');
 	local info = GetLootInfo();
 	local json = _G['json'];
