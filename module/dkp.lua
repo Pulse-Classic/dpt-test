@@ -43,11 +43,15 @@ SlashCmdList.PULSE_DKP = function (msg)
 		end
 		local itemString, itemName = item:match("|H(.*)|h%[(.*)%]|h");
 		
+		
+		
 		local itemObj={};
 		itemObj.name,itemObj.link, itemObj.rarity, itemObj.level, itemObj.minLevel, itemObj.type, itemObj.subType,
 		itemObj.stackCount, itemObj.equipLoc, itemObj.texture, itemObj.sellPrice =GetItemInfo(itemName);
+		if(itemObj.name ~= nil) then
 		print(itemObj);
 		ns:DistributeLoot(itemObj,charLink);
+		end
 		-- KethoEditBox_Show(json.encode(temp));
 	elseif cmd == 'create' then
 		ns:CreateRaid(msg,args);
@@ -237,10 +241,11 @@ function ns:dkpLootOpen ()
 
 	if(info ~= nil) then 
 		for i = 1, #info do
-			local item={};
-			itemObj.name,itemObj.link, itemObj.rarity, itemObj.level, itemObj.minLevel, itemObj.type, itemObj.subType,
-			itemObj.stackCount, itemObj.equipLoc, itemObj.texture, itemObj.sellPrice =GetItemInfo(info[i].item);
-			ns:AddDrop(nil, item);
+			local item= GetItemInfo(info[i].item);
+
+			if (item ~= nil) then
+				ns:AddDrop(nil, item);	
+			end
 		end		
 	end
 	-- local json = _G['json'];
@@ -248,5 +253,24 @@ function ns:dkpLootOpen ()
 	-- print(json.encode(info));
 	-- KethoEditBox_Show(json.encode(info));
 end
+function ns:GenerateItem(itemName)
+	local item={};
+	local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(itemName);
 
+	if (itemName ~= nil) then
+		item.itemName = itemName;
+		item.itemLink = itemLink;
+		item.itemRarity = itemRarity;
+		item.itemLevel = itemLevel;
+		item.itemMinLevel = itemMinLevel;
+		item.itemType = itemType;
+		item.itemSubType = itemSubType;
+		item.itemStackCount = itemStackCount;
+		item.itemEquipLoc = itemEquipLoc;
+		item.itemTexture = itemTexture;
+		item.itemSellPrice = itemSellPrice;
+		return item;
+	end
+	
+end
 SLASH_PULSE_DKP1 = "/pd";
