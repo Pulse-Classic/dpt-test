@@ -8,13 +8,11 @@ function ns:init ()
 	end	
 	Pulse_DKP.version = 1;
 end
-
+frame:RegisterEvent('PLAYER_LOGIN');
 frame:SetScript('OnEvent', function (self, event, ...)
 	if (event == 'PLAYER_LOGIN') then
-
 		ns:init();
-		frame:RegisterEvent('LOOT_READY');
-
+		frame:RegisterEvent('LOOT_READY');		
 		frame:SetScript('OnEvent', function (self, event, bagId)
 			if (event == 'LOOT_READY') then
 				ns:dkpLootOpen();

@@ -219,9 +219,19 @@ end
 function ns:dkpLootOpen ()
 	local name = GetUnitName('target');
 	local info = GetLootInfo();
-	local json = _G['json'];
+
+	if(info ~= nil) then 
+		for i = 1, #info do
+			local item={};
+	item.name,item.link, item.rarity, item.level, item.minLevel, item.type, item.subType,
+	item.stackCount, item.equipLoc, item.texture, item.sellPrice =GetItemInfo(info[i].item);
+	
+	ns:AddDrop(nil, item);
+		end		
+	end
+	-- local json = _G['json'];
 	print(name);
-	print(json.encode(info));
+	-- print(json.encode(info));
 	-- KethoEditBox_Show(json.encode(info));
 end
 
