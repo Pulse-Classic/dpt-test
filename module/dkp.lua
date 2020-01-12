@@ -27,15 +27,8 @@ SlashCmdList.PULSE_DKP = function (msg)
 
 		temp.itemString = itemString;
 		temp.itemName = itemName;
-		temp.chars = {};
-		for i = 1, 40 do
-			local char = {};
-			char.name, char.rank = GetRaidRosterInfo(i);
-			if char.name ~= nil then
-				temp.chars[i] = {};
-				temp.chars[i].name, temp.chars[i].rank = GetRaidRosterInfo(i);
-			end
-		end
+		temp.chars = getRaidMembers();
+		KethoEditBox_Show(json.encode(temp));
 	elseif (cmd == 'donate' or cmd == 'loot') then
 		local _, _, item, char = string.find(args, "(.*)%s(%w+)");
 		if (string.sub(item, 0, 1) ~= '|') then
@@ -87,6 +80,20 @@ SlashCmdList.PULSE_DKP = function (msg)
 		-- print('Unknown command.');
 		PulseDkpUi_Show('show me the money');
 	end
+end
+
+function getRaidMembers ()
+	local temp = {};
+	for i = 1, 40 do
+		local char = {};
+		char.name, _, _, _, _, _, char.zone = GetRaidRosterInfo(i);
+
+		if char.name ~= nil then
+			tinsert(temp, char);
+		end
+	end
+
+	return temp;
 end
 
 function CreateRaid(msg, args)
@@ -192,4 +199,4 @@ function dkpLootOpen ()
 	-- KethoEditBox_Show(json.encode(info));
 end
 
-SLASH_PULSE_DKP1 = "/pulsedkp";
+SLASH_PULSE_DKP1 = "/pd";
