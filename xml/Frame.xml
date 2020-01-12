@@ -1,8 +1,5 @@
 <Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
-	<Script file="Frame.lua" />
-	<Font virtual="true" outline="NONE">
-		<Color r="1" g="1" b="1" />
-	</Font>
+	<Script file="Frame.lua" />	
 	<Frame name="PD_MainFrame" hidden="true" parent="UIParent" movable="true" resizable="true" enableMouse="true">
 		<Size x="568" y="544" />
 		<Anchors>

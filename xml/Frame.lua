@@ -1,6 +1,7 @@
 local _, ns = ...;
+
 function PD_MainFrame_OnLoad()
-	PD_BindCurrentRaid();
+	-- PD_BindCurrentRaid();
 end
 
 function LoadRaidHistory()
@@ -25,12 +26,13 @@ function PD_CreateRaid()
 end
 
 function PD_BindCurrentRaid()
+	print('binding current')
 	local tmp=ns:GetCurrentRaid();
-	prin('binding current')
+	
 	if(tmp == nil )then 
 		return;
 	end
-	prin('binding currn2');
+	print('binding currn2');
 	PDCurrentRaidName:SetText(tmp.name);
-	PDCurrentRaidDate:SetText(date("!%Y-%m-%d %H:%M",tmp.date));
+	PDCurrentRaidDate:SetText(tmp.date);
 end

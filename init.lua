@@ -5,7 +5,7 @@ local _, ns = ...;
 function ns:init ()
 	if ((Pulse_DKP == nil) or (Pulse_DKP.version < 1)) then
 		Pulse_DKP = {};
-	end
+	end	
 	Pulse_DKP.version = 1;
 end
 

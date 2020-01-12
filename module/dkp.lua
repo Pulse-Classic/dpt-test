@@ -119,7 +119,15 @@ function ns:CreateRaid(msg, args)
 	newRaid.name=args;
 	newRaid.date=date("!%Y-%m-%d %H:%M");
 	newRaid.createdBy=char;
-	newRaid.index=#PulseDkp.raids+1;
+	local index=1;
+	if(Pulse_DKP.raids ~= nil) then
+		index=#Pulse_DKP.raids+1;
+	end
+	if(Pulse_DKP.raids == nil) then
+		Pulse_DKP.raids={};
+	end
+
+	newRaid.index=index;
 	newRaid.closedOn=nil;
 	newRaid.startedOn=nil;
 	Pulse_DKP.raids[newRaid.index]= newRaid;
@@ -201,6 +209,10 @@ function ns:ListRaids()
 end
 
 function ns:GetCurrentRaid()
+	print('returning tmp');
+	if temp==nil then 
+		return ;
+	end	
 	return temp;
 end
 
