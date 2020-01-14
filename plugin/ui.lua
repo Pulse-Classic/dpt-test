@@ -9,7 +9,7 @@ function PD_Frame()
 
     PulseDkpMainFrame:SetBackdrop({
         bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", -- this one is neat
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
         edgeSize = 16,
         insets = { left = 0, right = 0, top =0, bottom = 0 },
     });
@@ -19,6 +19,7 @@ function PD_Frame()
     PD_registerResizeable();
     PD_registerCloseButton();
     PD_addTitleFrame();
+    PD_addNewRaidFrame();
     PulseDkpMainFrame:Show();
 
 end
@@ -34,8 +35,7 @@ function PD_registerDraggable()
         PulseDkpMainFrame:SetScript("OnMouseUp", PulseDkpMainFrame.StopMovingOrSizing);
 end
 function PD_registerResizeable()
-    	-- Resizable
-    PulseDkpMainFrame:SetResizable(true)
+   PulseDkpMainFrame:SetResizable(true)
     PulseDkpMainFrame:SetMinResize(400, 300)
     
     local rb = CreateFrame("Button", "PulseDkpResizeButton", PulseDkpMainFrame);
@@ -81,4 +81,26 @@ function PD_addTitleFrame()
     eb:SetWordWrap(false);    
     eb:SetText("Pulse Dkp assistant");
     
+end
+function PD_addNewRaidFrame()
+    local PD_NewRaid=CreateFrame("Frame","PulseDkpNewRaidFrame",PulseDkpMainFrame);
+    PD_NewRaid:SetSize(PulseDkpMainFrame:GetWidth(),200);
+    PD_NewRaid:SetPoint("TOPLEFT",0,-40);
+
+    local fs=PD_NewRaid:CreateFontString("PulseDkpNewRaid_TitleFont","OVERLAY" , "GameFontNormal" );
+    fs:SetFont("Fonts\\FRIZQT__.TTF",12);
+    fs:SetPoint("TOPLEFT",10,-10);
+    fs:SetWidth(200);
+    fs:SetJustifyH("LEFT");
+    fs:SetWordWrap(false);    
+    fs:SetText("Create a new raid:");
+
+    local PD_NewRaidBtn=CreateFrame("Button", "PulseDkpNewButton", PulseDkpNewRaidFrame,"UIPanelButtonTemplate");    
+    PD_NewRaidBtn:SetPoint("TOPLEFT",200, -40);
+    PD_NewRaidBtn:SetSize(60, 20);
+    PD_NewRaidBtn:SetText("Create");
+
+    PD_NewRaidBtn:SetScript("OnMouseUp", function(self, button)
+        print("new raid");
+    end);	
 end
