@@ -1,10 +1,11 @@
 local _, ns = ...;
-local jsn = _G["json"];
+local selectedRaid;
+local currentRaid;
 function PD_Frame()
-    if PulseDkpMainFrame then
-        PulseDkpMainFrame:Show();
-        return
-    end
+    -- if PulseDkpMainFrame then
+    --     PulseDkpMainFrame:Show();
+    --     return
+    -- end
 	local PulseDkpMainFrame = CreateFrame("Frame", "PulseDkpMainFrame", UIParent);
     PulseDkpMainFrame:SetPoint("CENTER");
     PulseDkpMainFrame:SetSize(800, 600);
@@ -22,6 +23,7 @@ function PD_Frame()
     PD_registerCloseButton();
     PD_addTitleFrame();
     PD_addNewRaidFrame();
+    PD_addCurrentRaidFrame();
     PulseDkpMainFrame:Show();
 
 end
@@ -98,25 +100,27 @@ function PD_addNewRaidFrame()
     fs:SetText("Create a new raid:");
 
     local PD_NewRaidBtn=CreateFrame("Button", "PulseDkpNewButton", PulseDkpNewRaidFrame,"UIPanelButtonTemplate");    
-    PD_NewRaidBtn:SetPoint("TOPLEFT",200, -50);
-    PD_NewRaidBtn:SetSize(60, 20);
+    PD_NewRaidBtn:SetPoint("TOPLEFT",260, -30);
+    PD_NewRaidBtn:SetSize(60, 30);
     PD_NewRaidBtn:SetText("Create");
-
+    PD_NewRaidBtn:SetEnabled(false);
     PD_NewRaidBtn:SetScript("OnMouseUp", function(self, button)
-        print("new raid");
-        
+        ns:CreateRaid(selectedRaid)
+        currentRaid=ns:GetCurrentRaid();
+        PulseDkpNewRaidFrame:Hide();
+        PulseDkpCurrentRaidFrame:Show();
     end);	
     PD_addNewRaidDropDown();
 
 end
-local selectedRaid="nothing";
+
 function PD_addNewRaidDropDown()
     if PulseDkpNewRaidDropDown then
         return ;
     end
     -- Create the dropdown, and configure its appearance
     local dropdown = CreateFrame("Frame", "PulseDkpNewRaidDropDown", PulseDkpNewRaidFrame, "UIDropDownMenuTemplate");
-    dropdown:SetPoint("TOPLEFT", 10,-30);
+    dropdown:SetPoint("TOPLEFT", 0,-30);
     UIDropDownMenu_SetWidth(dropdown, 200);
     UIDropDownMenu_SetText(dropdown, "Select a raid..")
 
@@ -128,13 +132,13 @@ function PD_addNewRaidDropDown()
                 local info = UIDropDownMenu_CreateInfo();
                 info.text, info.arg1 =raid.name, raid.name;                
                 info.checked =false;
-                if selectedRaid==raid.name then
+                if selectedRaid~= nil and selectedRaid==raid.name then
                     info.checked=true;
                 end
                 info.func= function() 
                     selectedRaid=raid.name; 
                     UIDropDownMenu_SetText(dropdown, selectedRaid)  
-                    print('selected:' .. raid.name)                    ;
+                    PulseDkpNewButton:SetEnabled(true);
                 end;
                 UIDropDownMenu_AddButton(info,level);
             end
@@ -142,3 +146,97 @@ function PD_addNewRaidDropDown()
     end);
 end
 
+function PD_addCurrentRaidFrame()
+    local PD_CurrentRaid=CreateFrame("Frame","PulseDkpCurrentRaidFrame",PulseDkpMainFrame);
+    PD_CurrentRaid:SetSize(PulseDkpMainFrame:GetWidth(),200);
+    PD_CurrentRaid:SetPoint("TOPLEFT",0,-40);
+
+    --header
+    local fs=PD_CurrentRaid:CreateFontString("PulseDkpCurrentRaid_TitleFont","OVERLAY" , "GameFontNormal" );
+    fs:SetFont("Fonts\\FRIZQT__.TTF",14);
+    fs:SetPoint("TOPLEFT",10,-10);
+    fs:SetWidth(200);
+    fs:SetJustifyH("LEFT");
+    fs:SetWordWrap(false);    
+    fs:SetText("Current raid details:");
+
+    -- raid date
+    local fsRd=PD_CurrentRaid:CreateFontString("PulseDkpCurrentRaid_RaidDate","OVERLAY" , "GameFontNormal" );
+    fsRd:SetFont("Fonts\\FRIZQT__.TTF",12);
+    fsRd:SetPoint("TOPLEFT",10,-40);
+    fsRd:SetWidth(PD_CurrentRaid:GetWidth()-100);
+    fsRd:SetJustifyH("LEFT");
+    fsRd:SetWordWrap(false);    
+    fsRd:SetText("Raid date:");
+
+    --start time
+    local fsRStart=PD_CurrentRaid:CreateFontString("PulseDkpCurrentRaid_RaidStart","OVERLAY" , "GameFontNormal" );
+    fsRStart:SetFont("Fonts\\FRIZQT__.TTF",12);
+    fsRStart:SetPoint("TOPLEFT",10,-60);
+    fsRStart:SetWidth(PD_CurrentRaid:GetWidth()-100);
+    fsRStart:SetJustifyH("LEFT");
+    fsRStart:SetWordWrap(false);    
+    fsRStart:SetText("Started on:");
+
+    -- end time
+    local fsRS=PD_CurrentRaid:CreateFontString("PulseDkpCurrentRaid_RaidStatus","OVERLAY" , "GameFontNormal" );
+    fsRS:SetFont("Fonts\\FRIZQT__.TTF",12);
+    fsRS:SetPoint("TOPLEFT",10,-80);
+    fsRS:SetWidth(PD_CurrentRaid:GetWidth()-100);
+    fsRS:SetJustifyH("LEFT");
+    fsRS:SetWordWrap(false);    
+    fsRS:SetText("Status:");
+
+    -- start raid btn   
+    local PD_StartRaidBtn=CreateFrame("Button", "PulseDkpStartRaidButton", PulseDkpCurrentRaidFrame,"UIPanelButtonTemplate");    
+    PD_StartRaidBtn:SetPoint("TOPRIGHT",-10, -10);
+    PD_StartRaidBtn:SetSize(60, 20);
+    PD_StartRaidBtn:SetText("Start raid");
+
+    PD_StartRaidBtn:SetScript("OnMouseUp", function(self, button)
+        ns:StartRaid();
+        PD_StartRaidBtn:Hide();
+        PD_EndRaidBtn:Show();
+        PD_BindCurrentRaidDetails();
+    end);	
+    -- end raid btn
+    local PD_EndRaidBtn=CreateFrame("Button", "PulseDkpEndRaidButton", PulseDkpCurrentRaidFrame,"UIPanelButtonTemplate");    
+    PD_EndRaidBtn:SetPoint("TOPRIGHT",-10, -30);
+    PD_EndRaidBtn:SetSize(60, 20);
+    PD_EndRaidBtn:SetText("End raid");
+    PD_EndRaidBtn:Hide();
+    PD_EndRaidBtn:SetScript("OnMouseUp", function(self, button)
+        ns:EndRaid();
+        PD_BindCurrentRaidDetails();
+        PD_StartRaidBtn:Hide();
+        PD_EndRaidBtn:Hide();
+    end);	
+
+    -- event console
+    
+
+
+    PD_CurrentRaid:Hide();
+end
+
+function PD_BindCurrentRaidDetails()
+    if currentRaid == nil then
+        return;
+    end
+
+    if(currentRaid.closedOn~= nil) then
+        PulseDkpCurrentRaid_RaidStatus:SetText("Raid ended on:  ".. currentRaid.closedOn.."UTC");
+    else 
+        PulseDkpCurrentRaid_RaidStatus:SetText("Status:         ".."Raid stil in progres, good luck!");
+    end
+
+    if(currentRaid.date~= nil) then
+        PulseDkpCurrentRaid_RaidDate:SetText("Raid date:        ".. currentRaid.date);
+    end
+    if(currentRaid.startedOn~= nil) then
+        PulseDkpCurrentRaid_RaidStart:SetText("Raid started on:        ".. currentRaid.startedOn.."UTC");
+    else
+        PulseDkpCurrentRaid_RaidStart:SetText("Raid haven't started yet - good luck!");
+    end
+    
+end

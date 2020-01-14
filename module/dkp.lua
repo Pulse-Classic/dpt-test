@@ -113,7 +113,7 @@ function ns:getRaidMembers ()
 	return temp;
 end
 
-function ns:CreateRaid(msg, args)	
+function ns:CreateRaid(args)	
 	if args == nil or string.len(args)<2 then
 		print('A raid cannot be started without a name. A minimum of two characters is required. To include whitespaces, wrap your name in \'. For example: /pulse start \'Mc trash\'');
 		return;
@@ -122,7 +122,7 @@ function ns:CreateRaid(msg, args)
 	local newRaid={};
 	newRaid.chars = {};
 	newRaid.name=args;
-	newRaid.date=date("!%Y-%m-%d %H:%M");
+	newRaid.date=date("%Y-%m-%d");
 	newRaid.createdBy=char;
 	local index=1;
 	if(Pulse_DKP.raids ~= nil) then
