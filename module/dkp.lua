@@ -92,10 +92,12 @@ SlashCmdList.PULSE_DKP = function (msg)
 	end
 end
 function ns:PD_OpenMainFrame()
-	PD_MainFrame:Show();
+	-- PD_MainFrame:Show();
+	PD_Frame();	
 end
 function ns:PD_CloseMainFrame()
-	PD_MainFrame:Hide();
+	-- PD_MainFrame:Hide();
+	PulseDkpMainFrame:Hide();
 end
 function ns:getRaidMembers ()
 	local temp = {};
