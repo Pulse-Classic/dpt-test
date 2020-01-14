@@ -2,11 +2,7 @@ local _, ns = ...;
 local selectedRaid;
 local currentRaid;
 function PD_Frame()
-    -- if PulseDkpMainFrame then
-    --     PulseDkpMainFrame:Show();
-    --     return
-    -- end
-	local PulseDkpMainFrame = CreateFrame("Frame", "PulseDkpMainFrame", UIParent);
+   local PulseDkpMainFrame = CreateFrame("Frame", "PulseDkpMainFrame", UIParent);
     PulseDkpMainFrame:SetPoint("CENTER");
     PulseDkpMainFrame:SetSize(800, 600);
 
@@ -107,6 +103,7 @@ function PD_addNewRaidFrame()
     PD_NewRaidBtn:SetScript("OnMouseUp", function(self, button)
         ns:CreateRaid(selectedRaid)
         currentRaid=ns:GetCurrentRaid();
+        PD_BindCurrentRaidDetails();
         PulseDkpNewRaidFrame:Hide();
         PulseDkpCurrentRaidFrame:Show();
     end);	
@@ -155,10 +152,10 @@ function PD_addCurrentRaidFrame()
     local fs=PD_CurrentRaid:CreateFontString("PulseDkpCurrentRaid_TitleFont","OVERLAY" , "GameFontNormal" );
     fs:SetFont("Fonts\\FRIZQT__.TTF",14);
     fs:SetPoint("TOPLEFT",10,-10);
-    fs:SetWidth(200);
+    fs:SetWidth(PD_CurrentRaid:GetWidth()-100);
     fs:SetJustifyH("LEFT");
     fs:SetWordWrap(false);    
-    fs:SetText("Current raid details:");
+  
 
     -- raid date
     local fsRd=PD_CurrentRaid:CreateFontString("PulseDkpCurrentRaid_RaidDate","OVERLAY" , "GameFontNormal" );
@@ -195,8 +192,8 @@ function PD_addCurrentRaidFrame()
 
     PD_StartRaidBtn:SetScript("OnMouseUp", function(self, button)
         ns:StartRaid();
-        PD_StartRaidBtn:Hide();
-        PD_EndRaidBtn:Show();
+        PulseDkpStartRaidButton:Hide();
+        PulseDkpEndRaidButton:Show();
         PD_BindCurrentRaidDetails();
     end);	
     -- end raid btn
@@ -207,13 +204,27 @@ function PD_addCurrentRaidFrame()
     PD_EndRaidBtn:Hide();
     PD_EndRaidBtn:SetScript("OnMouseUp", function(self, button)
         ns:EndRaid();
-        PD_BindCurrentRaidDetails();
-        PD_StartRaidBtn:Hide();
-        PD_EndRaidBtn:Hide();
+        PD_BindCurrentRaidDetails();        
+        PulseDkpEndRaidButton:Hide();
+        PulseDkpDoneButton:Show();
     end);	
-
+    -- done btn
+    local PD_RaidDoneButton=CreateFrame("Button", "PulseDkpDoneButton", PulseDkpCurrentRaidFrame,"UIPanelButtonTemplate");    
+    PD_RaidDoneButton:SetPoint("TOPRIGHT",-10, -10);
+    PD_RaidDoneButton:SetSize(60, 20);
+    PD_RaidDoneButton:SetText("Done");
+    PD_RaidDoneButton:Hide();
+    PD_RaidDoneButton:SetScript("OnMouseUp", function(self, button)
+        currentRaid=nil;        
+        UIDropDownMenu_SetText(PulseDkpNewRaidDropDown, "Select a raid..")
+        PD_CurrentRaid:Hide();
+        PulseDkpCurrentRaidFrame:Hide();
+        PulseDkpStartRaidButton:Show();
+        PulseDkpDoneButton:Hide();
+        PulseDkpNewRaidFrame:Show();
+    end);	
     -- event console
-    
+
 
 
     PD_CurrentRaid:Hide();
@@ -223,7 +234,9 @@ function PD_BindCurrentRaidDetails()
     if currentRaid == nil then
         return;
     end
-
+    
+    PulseDkpCurrentRaid_TitleFont:SetText("Current raid details for:    "..currentRaid.name); 
+    
     if(currentRaid.closedOn~= nil) then
         PulseDkpCurrentRaid_RaidStatus:SetText("Raid ended on:  ".. currentRaid.closedOn.."UTC");
     else 
