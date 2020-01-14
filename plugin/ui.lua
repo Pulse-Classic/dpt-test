@@ -1,3 +1,5 @@
+local _, ns = ...;
+local jsn = _G["json"];
 function PD_Frame()
     if PulseDkpMainFrame then
         PulseDkpMainFrame:Show();
@@ -96,11 +98,47 @@ function PD_addNewRaidFrame()
     fs:SetText("Create a new raid:");
 
     local PD_NewRaidBtn=CreateFrame("Button", "PulseDkpNewButton", PulseDkpNewRaidFrame,"UIPanelButtonTemplate");    
-    PD_NewRaidBtn:SetPoint("TOPLEFT",200, -40);
+    PD_NewRaidBtn:SetPoint("TOPLEFT",200, -50);
     PD_NewRaidBtn:SetSize(60, 20);
     PD_NewRaidBtn:SetText("Create");
 
     PD_NewRaidBtn:SetScript("OnMouseUp", function(self, button)
         print("new raid");
+        
     end);	
+    PD_addNewRaidDropDown();
+
 end
+local selectedRaid="nothing";
+function PD_addNewRaidDropDown()
+    if PulseDkpNewRaidDropDown then
+        return ;
+    end
+    -- Create the dropdown, and configure its appearance
+    local dropdown = CreateFrame("Frame", "PulseDkpNewRaidDropDown", PulseDkpNewRaidFrame, "UIDropDownMenuTemplate");
+    dropdown:SetPoint("TOPLEFT", 10,-30);
+    UIDropDownMenu_SetWidth(dropdown, 200);
+    UIDropDownMenu_SetText(dropdown, "Select a raid..")
+
+    -- Create and bind the initialization function to the dropdown menu
+    UIDropDownMenu_Initialize(dropdown, function(self,level)
+        for i=1, #Pulse_DKP.availableRaids do            
+            local raid=Pulse_DKP.availableRaids[i];
+            if raid ~=nil and raid.enabled==true then                
+                local info = UIDropDownMenu_CreateInfo();
+                info.text, info.arg1 =raid.name, raid.name;                
+                info.checked =false;
+                if selectedRaid==raid.name then
+                    info.checked=true;
+                end
+                info.func= function() 
+                    selectedRaid=raid.name; 
+                    UIDropDownMenu_SetText(dropdown, selectedRaid)  
+                    print('selected:' .. raid.name)                    ;
+                end;
+                UIDropDownMenu_AddButton(info,level);
+            end
+        end            
+    end);
+end
+
