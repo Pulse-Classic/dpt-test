@@ -86,7 +86,7 @@ SlashCmdList.PULSE_DKP = function (msg)
 			end
 		end
 	elseif (cmd=='close') then
-		ns:PD_CloseMainFrame();
+		ns:PD_CloseMainFrame();	
 	else		
 		ns:PD_OpenMainFrame();
 	end
@@ -156,7 +156,7 @@ function ns:StartRaid()
 
 	temp.startedOn=date("!%Y-%m-%d %H:%M");
 	Pulse_DKP.raids[temp.index]=temp;
-	-- ns:ListRaids();
+	-- ns:RegisterLootReady();
 end
 
 function ns:AddDrop(msg, item)
@@ -219,6 +219,7 @@ function ns:EndRaid(msg)
 	Pulse_DKP.raids[temp.index]=temp;
 	print('ending raid');
 	temp=nil;
+	-- ns:UnRegisterLootReady();
 end
 function ns:ClearRaids()
 	Pulse_DKP.raids={};
@@ -273,4 +274,6 @@ function ns:GenerateItem(itemName)
 	end
 	
 end
+
 SLASH_PULSE_DKP1 = "/pd";
+
