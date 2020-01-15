@@ -2,24 +2,26 @@ local _, ns = ...;
 local selectedRaid;
 local currentRaid;
 function PD_Frame()
-   local PulseDkpMainFrame = CreateFrame("Frame", "PulseDkpMainFrame", UIParent);
-    PulseDkpMainFrame:SetPoint("CENTER");
-    PulseDkpMainFrame:SetSize(800, 600);
+    if not PulseDkpMainFrame then        
+        local PulseDkpMainFrame = CreateFrame("Frame", "PulseDkpMainFrame", UIParent);
+            PulseDkpMainFrame:SetPoint("CENTER");
+            PulseDkpMainFrame:SetSize(800, 600);
 
-    PulseDkpMainFrame:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
-        edgeSize = 16,
-        insets = { left = 0, right = 0, top =0, bottom = 0 },
-    });
-    PulseDkpMainFrame:SetBackdropBorderColor(0, .44, .87, 0.5); -- darkblue
-    
-    PD_registerDraggable();
-    PD_registerResizeable();
-    PD_registerCloseButton();
-    PD_addTitleFrame();
-    PD_addNewRaidFrame();
-    PD_addCurrentRaidFrame();
+            PulseDkpMainFrame:SetBackdrop({
+                bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+                edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border", 
+                edgeSize = 16,
+                insets = { left = 0, right = 0, top =0, bottom = 0 },
+            });
+            PulseDkpMainFrame:SetBackdropBorderColor(0, .44, .87, 0.5); -- darkblue
+            
+            PD_registerDraggable();
+            PD_registerResizeable();
+            PD_registerCloseButton();
+            PD_addTitleFrame();
+            PD_addNewRaidFrame();
+            PD_addCurrentRaidFrame();
+    end
     PulseDkpMainFrame:Show();
 
 end
@@ -253,3 +255,7 @@ function PD_BindCurrentRaidDetails()
     end
     
 end
+
+-- function PD_addDropsFrame()
+
+-- end
