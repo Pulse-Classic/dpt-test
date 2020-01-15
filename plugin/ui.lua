@@ -104,6 +104,9 @@ function PD_addNewRaidFrame()
     PD_NewRaidBtn:SetText("Create");
     PD_NewRaidBtn:SetEnabled(false);
     PD_NewRaidBtn:SetScript("OnMouseUp", function(self, button)
+        if(selectedRaid == nil) then 
+            return ;
+        end
         ns:CreateRaid(selectedRaid)
         currentRaid=ns:GetCurrentRaid();
         PD_BindCurrentRaidDetails();
@@ -218,7 +221,9 @@ function PD_addCurrentRaidFrame()
     PD_RaidDoneButton:SetText("Done");
     PD_RaidDoneButton:Hide();
     PD_RaidDoneButton:SetScript("OnMouseUp", function(self, button)
-        currentRaid=nil;        
+        currentRaid=nil;       
+        selectedRaid=nil; 
+        PulseDkpNewButton:SetEnabled(false);
         UIDropDownMenu_SetText(PulseDkpNewRaidDropDown, "Select a raid..")
         PD_CurrentRaid:Hide();
         PulseDkpCurrentRaidFrame:Hide();
