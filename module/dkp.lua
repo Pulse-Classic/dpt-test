@@ -241,20 +241,23 @@ end
 function ns:dkpLootOpen ()
 	local name = GetUnitName('target');
 	local info = GetLootInfo();
-
+	local json = _G['json'];
 	if(info ~= nil) then 
 		for i = 1, #info do
 			local item= GetItemInfo(info[i].item);
-
-			if (item ~= nil) then
-				ns:AddDrop(nil, item);	
-			end
+			local t=info[i];
+			-- if (item ~= nil) then
+			-- 	ns:AddDrop(nil, item);	
+			-- else
+				ns:AddDrop(nil, t.item);	
+			-- end
 		end		
 	end
-	-- local json = _G['json'];
+	
 	print(name);
-	-- print(json.encode(info));
+	
 	-- KethoEditBox_Show(json.encode(info));
+	PD_BindCurrentRaidDetails();
 end
 function ns:GenerateItem(itemName)
 	local item={};

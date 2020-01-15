@@ -16,12 +16,13 @@ function PD_Frame()
             PulseDkpMainFrame:SetBackdropBorderColor(0, .44, .87, 0.5); -- darkblue
             
             PD_registerDraggable();
-            PD_registerResizeable();
+            -- PD_registerResizeable();
             PD_registerCloseButton();
             PD_addTitleFrame();
             PD_addNewRaidFrame();
             PD_addCurrentRaidFrame();
     end
+    PD_BindCurrentRaidDetails();
     PulseDkpMainFrame:Show();
 
 end
@@ -36,30 +37,30 @@ function PD_registerDraggable()
         end);
         PulseDkpMainFrame:SetScript("OnMouseUp", PulseDkpMainFrame.StopMovingOrSizing);
 end
-function PD_registerResizeable()
-   PulseDkpMainFrame:SetResizable(true)
-    PulseDkpMainFrame:SetMinResize(400, 300)
+-- function PD_registerResizeable()
+--    PulseDkpMainFrame:SetResizable(true)
+--     PulseDkpMainFrame:SetMinResize(400, 300)
     
-    local rb = CreateFrame("Button", "PulseDkpResizeButton", PulseDkpMainFrame);
-    rb:SetPoint("BOTTOMRIGHT", -4, 4);
-    rb:SetSize(16, 16);
+--     local rb = CreateFrame("Button", "PulseDkpResizeButton", PulseDkpMainFrame);
+--     rb:SetPoint("BOTTOMRIGHT", -4, 4);
+--     rb:SetSize(16, 16);
 
-    rb:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up");
-    rb:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight");
-    rb:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down");
+--     rb:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up");
+--     rb:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight");
+--     rb:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down");
 
-    rb:SetScript("OnMouseDown", function(self, button)
-        if button == "LeftButton" then
-            PulseDkpMainFrame:StartSizing("BOTTOMRIGHT");
-            self:GetHighlightTexture():Hide();            
-        end
-    end);
-    rb:SetScript("OnMouseUp", function(self, button)
-        PulseDkpMainFrame:StopMovingOrSizing();
-        self:GetHighlightTexture():Show();
-        PD_TitleFont:SetWidth(PulseDkpMainFrame:GetWidth());
-    end);
-end
+--     rb:SetScript("OnMouseDown", function(self, button)
+--         if button == "LeftButton" then
+--             PulseDkpMainFrame:StartSizing("BOTTOMRIGHT");
+--             self:GetHighlightTexture():Hide();            
+--         end
+--     end);
+--     rb:SetScript("OnMouseUp", function(self, button)
+--         PulseDkpMainFrame:StopMovingOrSizing();
+--         self:GetHighlightTexture():Show();
+--         PD_TitleFont:SetWidth(PulseDkpMainFrame:GetWidth());
+--     end);
+-- end
 function PD_registerCloseButton()
     local PD_CloseBtn=CreateFrame("Button", "PulseDkpCloseButton", PulseDkpMainFrame,"UIPanelButtonTemplate");
     PD_CloseBtn:SetPoint("TOPRIGHT", 1, 17);
@@ -225,20 +226,38 @@ function PD_addCurrentRaidFrame()
         PulseDkpDoneButton:Hide();
         PulseDkpNewRaidFrame:Show();
     end);	
+
+    local consoleHr=PulseDkpCurrentRaidFrame:CreateLine();
+    consoleHr:SetStartPoint('TOPLEFT',0, -100);
+    consoleHr:SetStartPoint('TOPLEFT',PulseDkpCurrentRaidFrame:GetWidth(),-100);
+    -- consoleHr:SetColorTexture(1,0,0,1)
     -- event console
+    local sf = CreateFrame("ScrollFrame", "PulseDkpDropsFrame", PulseDkpCurrentRaidFrame, "UIPanelScrollFrameTemplate");    
+    sf:SetPoint("TOPLEFT", 10, -120);
+    sf:SetSize(PulseDkpMainFrame:GetWidth()-37, PulseDkpMainFrame:GetHeight()-165);
 
-
-
+    -- EditBox
+    local eb = CreateFrame("EditBox", "PulseDkpDropsBox", PulseDkpDropsFrame);
+    eb:SetSize(sf:GetSize());
+    eb:SetMultiLine(true);
+    eb:SetAutoFocus(false); -- dont automatically focus
+    eb:SetEnabled(false);
+    eb:SetFontObject("ChatFontNormal");
+    -- eb:SetScript("OnEscapePressed", function() f:Hide() end)
+    sf:SetScrollChild(eb)
+        
     PD_CurrentRaid:Hide();
 end
 
 function PD_BindCurrentRaidDetails()
+    currentRaid=ns:GetCurrentRaid();
+
     if currentRaid == nil then
         return;
     end
-    
-    PulseDkpCurrentRaid_TitleFont:SetText("Current raid details for:    "..currentRaid.name); 
-    
+    if currentRaid.name ~= nil then
+        PulseDkpCurrentRaid_TitleFont:SetText("Current raid details for:    "..currentRaid.name); 
+    end 
     if(currentRaid.closedOn~= nil) then
         PulseDkpCurrentRaid_RaidStatus:SetText("Raid ended on:  ".. currentRaid.closedOn.."UTC");
     else 
@@ -253,9 +272,16 @@ function PD_BindCurrentRaidDetails()
     else
         PulseDkpCurrentRaid_RaidStart:SetText("Raid haven't started yet - good luck!");
     end
-    
+    PD_addDropsToFrame();
 end
 
--- function PD_addDropsFrame()
-
--- end
+function PD_addDropsToFrame()    
+    local h='';
+    if currentRaid ~= nil and currentRaid.drops~= nil then
+        for i=1, #currentRaid.drops do
+            local d=currentRaid.drops[i];            
+            h=h..i..': '.. d.item..'\n';
+        end
+    end       
+    PulseDkpDropsBox:SetText(h);    
+end
