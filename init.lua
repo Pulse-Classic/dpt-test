@@ -20,7 +20,7 @@ frame:RegisterEvent('PLAYER_LOGIN');
 frame:SetScript('OnEvent', function (self, event, ...)
 	if (event == 'PLAYER_LOGIN') then
 		ns:init();
-		frame:RegisterEvent('LOOT_READY');		
+		-- frame:RegisterEvent('LOOT_READY');		
 		-- frame:RegisterEvent('RAID_INSTANCE_WELCOME');
 		
 		frame:SetScript('OnEvent', function (self, event, bagId)
@@ -36,10 +36,10 @@ frame:SetScript('OnEvent', function (self, event, ...)
 	end
 end);
 
--- function ns:RegisterLootReady()
--- 	frame:RegisterEvent('LOOT_READY');		
--- end
--- function ns:UnRegisterLootReady()
--- 	frame:UnregisterEvent('LOOT_READY');		
--- end
+function ns:RegisterLootReady()
+	frame:RegisterEvent('LOOT_READY');		
+end
+function ns:UnRegisterLootReady()
+	frame:UnregisterEvent('LOOT_READY');		
+end
 

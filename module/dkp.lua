@@ -158,7 +158,7 @@ function ns:StartRaid()
 
 	temp.startedOn=date("!%Y-%m-%d %H:%M");
 	Pulse_DKP.raids[temp.index]=temp;
-	-- ns:RegisterLootReady();
+	ns:RegisterLootReady();
 end
 
 function ns:AddDrop(msg, item)
@@ -221,7 +221,7 @@ function ns:EndRaid(msg)
 	Pulse_DKP.raids[temp.index]=temp;
 	print('ending raid');
 	temp=nil;
-	-- ns:UnRegisterLootReady();
+	ns:UnRegisterLootReady();
 end
 function ns:ClearRaids()
 	Pulse_DKP.raids={};
@@ -230,8 +230,7 @@ function ns:ListRaids()
 	KethoEditBox_Show(json.encode(Pulse_DKP.raids));
 end
 
-function ns:GetCurrentRaid()
-	print('returning tmp');
+function ns:GetCurrentRaid()	
 	if temp==nil then 
 		return ;
 	end	
