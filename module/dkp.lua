@@ -184,7 +184,7 @@ function ns:AddDrop(msg, item)
 
 	tinsert(temp.drops, drop);
 	Pulse_DKP.raids[temp.index]=temp;
-	print('added drop');
+	
 
 end
 function ns:DistributeLoot(item, winner)
@@ -243,12 +243,7 @@ function ns:dkpLootOpen ()
 		for i = 1, #info do
 			-- local item= GetItemInfo(info[i].item);
 			local t=info[i];
-			if t.quality >0 then
-			-- if (item ~= nil) then
-			-- 	ns:AddDrop(nil, item);	
-			-- else
-				ns:AddDrop(nil, t.item);	
-			end
+				ns:AddDrop(nil, t);				
 		end		
 	end
 	

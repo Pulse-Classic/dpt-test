@@ -315,7 +315,7 @@ function PD_addDropsToFrame()
     if currentRaid ~= nil and currentRaid.drops~= nil then
         for i=1, #currentRaid.drops do
             local d=currentRaid.drops[i];            
-            h=h..i..': '.. d.item..'\n';
+            h=h..i..': '.. d.item.item..'\n';
         end
     end       
     PulseDkpDropsBox:SetText(h);    
