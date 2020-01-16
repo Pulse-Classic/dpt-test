@@ -218,9 +218,7 @@ function ns:EndRaid(msg)
 		end
 	end
 	temp.closedOn=date("!%Y-%m-%d %H:%M");
-	Pulse_DKP.raids[temp.index]=temp;
-	print('ending raid');
-	temp=nil;
+	Pulse_DKP.raids[temp.index]=temp;		
 	ns:UnRegisterLootReady();
 end
 function ns:ClearRaids()

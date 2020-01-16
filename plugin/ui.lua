@@ -1,6 +1,7 @@
 local _, ns = ...;
 local selectedRaid;
 local currentRaid;
+local json=_G["json"];
 function PD_Frame()
     if not PulseDkpMainFrame then        
         local PulseDkpMainFrame = CreateFrame("Frame", "PulseDkpMainFrame", UIParent);
@@ -264,16 +265,17 @@ function PD_BindCurrentRaidDetails()
         PulseDkpCurrentRaid_TitleFont:SetText("Current raid details for:    "..currentRaid.name); 
     end 
     if(currentRaid.closedOn~= nil) then
-        PulseDkpCurrentRaid_RaidStatus:SetText("Raid ended on:  ".. currentRaid.closedOn.."UTC");
+        PulseDkpCurrentRaid_RaidStatus:Show();
+        PulseDkpCurrentRaid_RaidStatus:SetText("Raid ended on:  ".. currentRaid.closedOn.." UTC");
     else 
-        PulseDkpCurrentRaid_RaidStatus:SetText("Status:         ".."Raid stil in progres, good luck!");
+        PulseDkpCurrentRaid_RaidStatus:Hide();
     end
 
     if(currentRaid.date~= nil) then
         PulseDkpCurrentRaid_RaidDate:SetText("Raid date:        ".. currentRaid.date);
     end
     if(currentRaid.startedOn~= nil) then
-        PulseDkpCurrentRaid_RaidStart:SetText("Raid started on:        ".. currentRaid.startedOn.."UTC");
+        PulseDkpCurrentRaid_RaidStart:SetText("Raid started on:        ".. currentRaid.startedOn.." UTC");
     else
         PulseDkpCurrentRaid_RaidStart:SetText("Raid haven't started yet - good luck!");
     end
