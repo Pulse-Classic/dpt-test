@@ -238,20 +238,21 @@ end
 function ns:dkpLootOpen ()
 	local name = GetUnitName('target');
 	local info = GetLootInfo();
-	local json = _G['json'];
+	-- local json = _G['json'];
 	if(info ~= nil) then 
 		for i = 1, #info do
-			local item= GetItemInfo(info[i].item);
+			-- local item= GetItemInfo(info[i].item);
 			local t=info[i];
+			if t.quality >0 then
 			-- if (item ~= nil) then
 			-- 	ns:AddDrop(nil, item);	
 			-- else
 				ns:AddDrop(nil, t.item);	
-			-- end
+			end
 		end		
 	end
 	
-	print(name);
+	-- print(name);
 	
 	-- KethoEditBox_Show(json.encode(info));
 	PD_BindCurrentRaidDetails();
