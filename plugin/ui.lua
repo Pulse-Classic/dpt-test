@@ -2,6 +2,7 @@ local _, ns = ...;
 local selectedRaid;
 local currentRaid;
 local json=_G["json"];
+local raiders;
 function PD_Frame()
     if not PulseDkpMainFrame then        
         local PulseDkpMainFrame = CreateFrame("Frame", "PulseDkpMainFrame", UIParent);
@@ -185,7 +186,7 @@ function PD_addCurrentRaidFrame()
     -- end time
     local fsRS=PD_CurrentRaid:CreateFontString("PulseDkpCurrentRaid_RaidStatus","OVERLAY" , "GameFontNormal" );
     fsRS:SetFont("Fonts\\FRIZQT__.TTF",12);
-    fsRS:SetPoint("TOPLEFT",10,-80);
+    fsRS:SetPoint("TOPLEFT",10,-60);
     fsRS:SetWidth(PD_CurrentRaid:GetWidth()-100);
     fsRS:SetJustifyH("LEFT");
     fsRS:SetWordWrap(false);    
@@ -205,7 +206,7 @@ function PD_addCurrentRaidFrame()
     end);	
     -- end raid btn
     local PD_EndRaidBtn=CreateFrame("Button", "PulseDkpEndRaidButton", PulseDkpCurrentRaidFrame,"UIPanelButtonTemplate");    
-    PD_EndRaidBtn:SetPoint("TOPRIGHT",-10, -30);
+    PD_EndRaidBtn:SetPoint("TOPRIGHT",-10, -10);
     PD_EndRaidBtn:SetSize(60, 20);
     PD_EndRaidBtn:SetText("End raid");
     PD_EndRaidBtn:Hide();
@@ -233,14 +234,19 @@ function PD_addCurrentRaidFrame()
         PulseDkpNewRaidFrame:Show();
     end);	
 
-    local consoleHr=PulseDkpCurrentRaidFrame:CreateLine();
-    consoleHr:SetStartPoint('TOPLEFT',0, -100);
-    consoleHr:SetStartPoint('TOPLEFT',PulseDkpCurrentRaidFrame:GetWidth(),-100);
-    -- consoleHr:SetColorTexture(1,0,0,1)
+    -- event console header
+        local ech=PD_CurrentRaid:CreateFontString("PulseDkpEventConsoleHeader","OVERLAY" , "GameFontNormal" );
+        ech:SetFont("Fonts\\FRIZQT__.TTF",14);
+        ech:SetPoint("TOPLEFT",10,-110);
+        ech:SetWidth((PulseDkpMainFrame:GetWidth()/2)-10);
+        ech:SetJustifyH("CENTER");
+        ech:SetWordWrap(false);    
+        ech:SetText("Drops this raid");
     -- event console
+
     local sf = CreateFrame("ScrollFrame", "PulseDkpDropsFrame", PulseDkpCurrentRaidFrame, "UIPanelScrollFrameTemplate");    
-    sf:SetPoint("TOPLEFT", 10, -120);
-    sf:SetSize(PulseDkpMainFrame:GetWidth()-37, PulseDkpMainFrame:GetHeight()-165);
+    sf:SetPoint("TOPLEFT", 10, -140);
+    sf:SetSize((PulseDkpMainFrame:GetWidth()/2-37), PulseDkpMainFrame:GetHeight()-185);
 
     -- EditBox
     local eb = CreateFrame("EditBox", "PulseDkpDropsBox", PulseDkpDropsFrame);
@@ -249,9 +255,30 @@ function PD_addCurrentRaidFrame()
     eb:SetAutoFocus(false); -- dont automatically focus
     eb:SetEnabled(false);
     eb:SetFontObject("ChatFontNormal");
-    -- eb:SetScript("OnEscapePressed", function() f:Hide() end)
     sf:SetScrollChild(eb)
-        
+
+    -- raiders header
+    local raidersHeader=PD_CurrentRaid:CreateFontString("PulseDkpEventRaidersHeader","OVERLAY" , "GameFontNormal" );
+    raidersHeader:SetFont("Fonts\\FRIZQT__.TTF",14);
+    raidersHeader:SetPoint("TOPLEFT", (PulseDkpMainFrame:GetWidth()/2), -110);
+    raidersHeader:SetWidth((PulseDkpMainFrame:GetWidth()/2)-10);
+    raidersHeader:SetJustifyH("CENTER");
+    raidersHeader:SetWordWrap(false);    
+    raidersHeader:SetText("Paricipants this raid");
+    -- raiders
+    local rf = CreateFrame("ScrollFrame", "PulseDkpRaidersFrame", PulseDkpCurrentRaidFrame, "UIPanelScrollFrameTemplate");    
+    rf:SetPoint("TOPLEFT", 10+(PulseDkpMainFrame:GetWidth()/2), -140);
+    rf:SetSize((PulseDkpMainFrame:GetWidth()/2-37), PulseDkpMainFrame:GetHeight()-185);
+
+    -- EditBox
+    local rb = CreateFrame("EditBox", "PulseDkpRaidersBox", PulseDkpRaidersFrame);
+    rb:SetSize(sf:GetSize());
+    rb:SetMultiLine(true);
+    rb:SetAutoFocus(false); -- dont automatically focus
+    rb:SetEnabled(false);
+    rb:SetFontObject("ChatFontNormal");
+    -- eb:SetScript("OnEscapePressed", function() f:Hide() end)
+    rf:SetScrollChild(rb)
     PD_CurrentRaid:Hide();
 end
 
@@ -280,6 +307,7 @@ function PD_BindCurrentRaidDetails()
         PulseDkpCurrentRaid_RaidStart:SetText("Raid haven't started yet - good luck!");
     end
     PD_addDropsToFrame();
+    PD_addRaidersToFrame();
 end
 
 function PD_addDropsToFrame()    
@@ -291,4 +319,34 @@ function PD_addDropsToFrame()
         end
     end       
     PulseDkpDropsBox:SetText(h);    
+end
+
+function PD_addRaidersToFrame()    
+    
+    local added={};
+    local h='';
+    if currentRaid ~= nil and currentRaid.startingChars~= nil then
+        for i=1, #currentRaid.startingChars do
+            local d=currentRaid.startingChars[i];            
+            added[d.name]=true;
+            h=h..i..': '.. d.name..' (present from the start)\n';
+        end
+    end      
+
+    if currentRaid ~= nil and currentRaid.drops~= nil then
+        for i=1, #currentRaid.drops do
+            local drop=currentRaid.drops[i];            
+            if drop ~= nil and drop.chars~=nil then
+                for x=1, #drop.chars do
+                    local char=drop.chars[x];
+                    if added[char.name]== nil then
+                        added[char.name]=true;                         
+                        h=h..i..': '.. char.name..'\n';
+                    end
+                end
+            end            
+        end
+    end      
+    -- print('raiders'..h);
+    PulseDkpRaidersBox:SetText(h);    
 end
