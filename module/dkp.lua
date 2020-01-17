@@ -161,7 +161,7 @@ function ns:StartRaid()
 	ns:RegisterLootReady();
 end
 
-function ns:AddDrop(msg, item)
+function ns:AddDrop(mob, item)
 	if temp==nil then
 		return;
 	end
@@ -170,13 +170,13 @@ function ns:AddDrop(msg, item)
 		temp.drops={};
 	end
 	local drop={};
+	drop.mob=mob;
 	drop.item=item;
 	drop.chars={};
 
 	for i = 1, 40 do
 		local char = {};
 		char.name, char.rank, _,_,_,_,char.zone = GetRaidRosterInfo(i);
-
 		if char.name ~= nil then
 			tinsert(drop.chars,char);
 		end
@@ -236,19 +236,32 @@ function ns:GetCurrentRaid()
 end
 
 function ns:dkpLootOpen ()
-	local name = GetUnitName('target');
+	local mobId=UnitGUID("target");
+	local add=true;
+	if temp~= nil and temp.drops~= nil then
+		for i=1, #temp.drops do
+			if temp.drops[i].mob.id==mobId then
+				add=false;
+				break;
+			end
+		end
+	end
+	if(add==false) then
+		return
+	end;
+
 	local info = GetLootInfo();
-	-- local json = _G['json'];
+	local mob={name = GetUnitName('target'),id=mobId};
 	if(info ~= nil) then 
 		for i = 1, #info do
 			-- local item= GetItemInfo(info[i].item);
 			local t=info[i];
-				ns:AddDrop(nil, t);				
+				ns:AddDrop(mob, t);				
 		end		
 	end
 	
 	-- print(name);
-	
+	-- local json = _G['json'];
 	-- KethoEditBox_Show(json.encode(info));
 	PD_BindCurrentRaidDetails();
 end
