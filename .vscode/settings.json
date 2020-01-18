@@ -20,7 +20,22 @@
         "UnitGUID",
         "GetLootInfo",
         "GetUnitName",
-        "SendAddonMessage",        
-        "C_ChatInfo"
+        "SendAddonMessage",
+        "C_ChatInfo",
+        "PulseDkpCurrentRaidFrame",
+        "PulseDkpStartRaidButton",
+        "PulseDkpEndRaidButton",
+        "PulseDkpDoneButton",
+        "UIDropDownMenu_SetText",
+        "PulseDkpNewButton",
+        "PulseDkpNewRaidDropDown",
+        "PulseDkpNewRaidFrame",
+        "PulseDkpDropsFrame",
+        "PulseDkpRaidersFrame",
+        "PulseDkpRaidersBox",
+        "UIDropDownMenu_SetWidth",
+        "UIDropDownMenu_Initialize",
+        "UIDropDownMenu_CreateInfo",
+        "UIDropDownMenu_AddButton"
     ]
 }
