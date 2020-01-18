@@ -9,8 +9,6 @@
 plugin\textbox.lua
 plugin\json.lua
 plugin\ui.lua
-xml\frame.xml
-xml\frame.lua
 init.lua
 module\dkp.lua
 module\storage_test.lua
