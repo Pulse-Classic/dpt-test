@@ -1,0 +1,26 @@
+{
+    "Lua.diagnostics.globals": [
+        "CreateFrame",
+        "UIParent",
+        "PulseDkpMainFrame",
+        "PulseDkpCurrentRaid_TitleFont",
+        "PulseDkpCurrentRaid_RaidStatus",
+        "PulseDkpCurrentRaid_RaidDate",
+        "PulseDkpCurrentRaid_RaidStart",
+        "PulseDkpDropsBox",
+        "tinsert",
+        "GetRealmName",
+        "SendChatMessage",
+        "GetItemInfo",
+        "RAID",
+        "SlashCmdList",
+        "UnitName",
+        "GetRaidRosterInfo",
+        "date",
+        "UnitGUID",
+        "GetLootInfo",
+        "GetUnitName",
+        "SendAddonMessage",        
+        "C_ChatInfo"
+    ]
+}
