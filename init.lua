@@ -29,10 +29,13 @@ local function Addon_OnEvent(self, event, ...)
             -- print(...);
         end
 
+    -- elseif event == "GROUP_ROSTER_UPDATE" then
+        -- print('roster updated');
+        -- print(event, ...);
     elseif event == "PLAYER_LOGIN" then
         ns:init();
-        local successfulRequest = C_ChatInfo.RegisterAddonMessagePrefix(
-                                      Pulse_DKP.channel);
+        C_ChatInfo.RegisterAddonMessagePrefix(Pulse_DKP.channel);
+
     elseif (event == 'LOOT_READY') then
         ns:dkpLootOpen();
     end
@@ -41,3 +44,4 @@ end
 frame:SetScript("OnEvent", Addon_OnEvent)
 frame:RegisterEvent("CHAT_MSG_ADDON");
 frame:RegisterEvent('PLAYER_LOGIN');
+-- frame:RegisterEvent('GROUP_ROSTER_UPDATE');

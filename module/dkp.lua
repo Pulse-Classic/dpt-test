@@ -160,6 +160,7 @@ function ns:AddDrop(mob, item)
     local drop = {};
     drop.mob = mob;
     drop.item = item;
+    drop.timestamp= date("!%Y-%m-%d %H:%M:%S")
     drop.chars = {};
 
     for i = 1, 40 do
