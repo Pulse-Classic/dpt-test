@@ -36,6 +36,7 @@
         "UIDropDownMenu_SetWidth",
         "UIDropDownMenu_Initialize",
         "UIDropDownMenu_CreateInfo",
-        "UIDropDownMenu_AddButton"
+        "UIDropDownMenu_AddButton",
+        "C_Item"
     ]
 }

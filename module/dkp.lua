@@ -160,7 +160,7 @@ function ns:AddDrop(mob, item)
     local drop = {};
     drop.mob = mob;
     drop.item = item;
-    drop.timestamp= date("!%Y-%m-%d %H:%M:%S")
+    drop.timestamp = date("!%Y-%m-%d %H:%M:%S")
     drop.chars = {};
 
     for i = 1, 40 do
@@ -206,7 +206,18 @@ function ns:GetCurrentRaid()
     if temp == nil then return; end
     return temp;
 end
-
+function ns:GetLastUnfinishedRaid()
+    if Pulse_DKP == nil or Pulse_DKP.raids == nil then
+        return;
+    else
+        for i = #Pulse_DKP.raids, 1, -1 do
+            if Pulse_DKP.raids[i].closedOn == nil then
+                return Pulse_DKP.raids[i];
+            end
+        end
+    end
+end
+function ns:SetCurrentRaid(raid) if (raid ~= nil) then temp = raid; end end
 function ns:dkpLootOpen()
     local mobId = UnitGUID("target");
     local add = true;
