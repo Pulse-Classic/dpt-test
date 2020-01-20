@@ -46,7 +46,7 @@ SlashCmdList.PULSE_DKP = function(msg)
         local itemString, itemName = item:match("|H(.*)|h%[(.*)%]|h");
         itemObj.itemString = itemString;
         itemObj.name = itemName;
-
+        itemObj.time = time();
         -- itemObj.name, itemObj.link, itemObj.rarity, itemObj.level, itemObj.minLevel, itemObj.type, itemObj.subType, itemObj.stackCount, itemObj.equipLoc, itemObj.texture, itemObj.sellPrice =
         -- GetItemInfo(itemName);
         if (itemObj.name ~= nil) then

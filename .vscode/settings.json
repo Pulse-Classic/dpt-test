@@ -37,6 +37,7 @@
         "UIDropDownMenu_Initialize",
         "UIDropDownMenu_CreateInfo",
         "UIDropDownMenu_AddButton",
-        "C_Item"
+        "C_Item",
+        "time"
     ]
 }
