@@ -133,8 +133,7 @@ function ns:CreateRaid(args)
     newRaid.startedOn = nil;
     Pulse_DKP.raids[newRaid.index] = newRaid;
     temp = newRaid;
-    C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, "Created raid!", "WHISPER",
-                                UnitName("player"));
+    -- ns:notify(1, temp);
     -- ns:ListRaids();
 end
 
@@ -173,7 +172,7 @@ function ns:AddDrop(mob, item)
 
     tinsert(temp.drops, drop);
     Pulse_DKP.raids[temp.index] = temp;
-
+    -- ns:notify(2, item);
 end
 function ns:DistributeLoot(item, winner)
     if temp == nil then return; end

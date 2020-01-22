@@ -6,10 +6,12 @@
 ## SavedVariables: Pulse_DKP
 ## DefaultState: enabled
 
+
 plugin\textbox.lua
 plugin\json.lua
 plugin\ui.lua
 init.lua
 module\dkp.lua
 module\storage_test.lua
+module\msg.lua
 pulse_dkp.lua

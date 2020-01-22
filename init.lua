@@ -26,10 +26,10 @@ local function Addon_OnEvent(self, event, ...)
               name, instanceID = ...;
         if (prefix == Pulse_DKP.channel) then
             -- handle the incomming message;
-            -- print(...);
+            ns:messageRecieved(...);
         end
 
-    -- elseif event == "GROUP_ROSTER_UPDATE" then
+        -- elseif event == "GROUP_ROSTER_UPDATE" then
         -- print('roster updated');
         -- print(event, ...);
     elseif event == "PLAYER_LOGIN" then
