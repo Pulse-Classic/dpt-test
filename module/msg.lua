@@ -1,4 +1,5 @@
 local _, ns = ...;
+local json = _G['json'];
 
 function ns:notify(cmd, args)
 
@@ -28,14 +29,26 @@ function ns:packageMessage(cmd, args)
     else
         msg = msg .. args;
     end
-    msg = msg .. '::args';
     return msg
-
 end
 
 function ns:parseMessage(msg)
-    -- local tablDto = table.fromstring(msg);
-    -- return tablDto
+    local obj = {};
+    local arg = {};
+    local index = 1;
+    for token in string.gmatch(msg, "[^%//]+") do
+
+        if index == 1 then obj.cmd = token:gsub("cmd=", ""); end
+        if index == 2 then token = token:gsub("args=", ""); end
+        if index > 1 then
+            local prop, value = string.match(token, "(.*)=(.*)");
+            arg[prop] = value;
+        end
+        index = index + 1;
+    end
+    obj.args = arg;
+    print(json.encode(obj));
+    return obj;
 end
 function ns:tableToString(tbl)
     if tbl == nil then return; end

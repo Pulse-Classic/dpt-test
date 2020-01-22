@@ -172,7 +172,7 @@ function ns:AddDrop(mob, item)
 
     tinsert(temp.drops, drop);
     Pulse_DKP.raids[temp.index] = temp;
-    -- ns:notify(2, item);
+    ns:notify(2, item);
 end
 function ns:DistributeLoot(item, winner)
     if temp == nil then return; end
