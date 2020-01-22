@@ -172,7 +172,30 @@ function ns:AddDrop(mob, item)
 
     tinsert(temp.drops, drop);
     Pulse_DKP.raids[temp.index] = temp;
-    ns:notify(2, item);
+    local copy = {}
+
+    copy.mobid = mob.id;
+    copy.quantity = item.quantity;
+    copy.roll = item.roll;
+    copy.mobname = mob.name;
+    copy.locked = item.locked;
+    copy.quality = item.quality;
+    copy.item = item.item;
+    copy.texture = item.texture;
+
+    ns:notify(2, copy);
+
+    local updates = {mobid = mob, chars = {}};
+    local index = 0;
+    for i = 1, #drop.chars do
+        updates.chars[index] = drop.chars[i];
+        index = index + 1;
+        if (index == 5 or i == #drop.chars) then
+            ns:notify(10, updates);
+            updates.chars = {};
+            index = 0;
+        end
+    end
 end
 function ns:DistributeLoot(item, winner)
     if temp == nil then return; end
@@ -269,6 +292,33 @@ function ns:GenerateItem(itemName)
     end
 
 end
+function ns:UpdateDropFromOther(drop)
+    if drop == nil or temp == nil then return; end
+    if temp.drops == nil then temp.drops = {}; end
 
+    local mobid, mobname = drop.mobid, drop.mobname;
+    local dropIndex;
+
+    for i = 1, #temp.drops do
+        local d = temp.drops[i];
+        if d ~= nil and d.mob ~= nil and d.mob.id == mobid and d.item.item ==
+            drop.item then
+
+            dropIndex = i;
+            break
+        end
+    end
+    if (dropIndex ~= nil) then return; end
+
+    local item = {};
+    for key, value in pairs(drop) do
+        if (key ~= "mobid" and key ~= "mobname") then item[key] = value; end
+    end
+
+    local d = {mob = {name = mobname, id = mobid}, item = item};
+    tinsert(temp.drops, d);
+
+    KethoEditBox_Show(json.encode(temp));
+end
 SLASH_PULSE_DKP1 = "/pd";
 

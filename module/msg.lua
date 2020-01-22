@@ -12,7 +12,16 @@ function ns:messageRecieved(...)
     local prefix, text, channel, sender, target, zoneChannelID, localID, name,
           instanceID = ...;
     print(...);
-    ns:parseMessage(text)
+    local arg = ns:parseMessage(text)
+    if (arg == nil or arg.cmd == nil) then return end
+
+    if (arg.cmd == "1") then -- create raid
+
+    elseif arg.cmd == "2" then -- drop
+        ns:UpdateDropFromOther(arg.args);
+        -- else if arg.cmd== 3 then --roll
+        -- else
+    end
 end
 
 function ns:packageMessage(cmd, args)
