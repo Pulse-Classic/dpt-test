@@ -51,10 +51,12 @@
 			</OnMouseUp>			
 			<OnDragStart>
 				self:LockHighlight()
+                self:StartMoving();
 				<!-- ItemRack.StartTimer("MinimapDragging") -->
 				PulseDkpMinimapIcon:SetTexCoord(.075,.925,.075,.925)
 			</OnDragStart>
 			<OnDragStop>
+            self:StopMovingOrSizing();
 				<!-- ItemRack.StopTimer("MinimapDragging") -->
 				self:UnlockHighlight()
 				PulseDkpMinimapIcon:SetTexCoord(0,1,0,1)
