@@ -308,7 +308,7 @@ function ns:UpdateDropFromOther(drop)
             break
         end
     end
-    if (dropIndex ~= nil) then return; end
+    if (dropIndex ~= nil) then return; end  
 
     local item = {};
     for key, value in pairs(drop) do
@@ -316,9 +316,8 @@ function ns:UpdateDropFromOther(drop)
     end
 
     local d = {mob = {name = mobname, id = mobid}, item = item};
-    tinsert(temp.drops, d);
-
-    KethoEditBox_Show(json.encode(temp));
+    tinsert(temp.drops, d);    
+    PD_BindCurrentRaidDetails();
 end
 SLASH_PULSE_DKP1 = "/pd";
 

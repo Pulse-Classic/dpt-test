@@ -4,9 +4,12 @@ local json = _G['json'];
 function ns:notify(cmd, args)
 
     local msg = ns:packageMessage(cmd, args);
-    C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "WHISPER",
-                                UnitName("player"));
+    -- send tell to yourself for debugging puposes
+    -- C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "WHISPER",
+    --                             UnitName("player"));
 
+    
+    -- C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "RAID");
 end
 function ns:messageRecieved(...)
     local prefix, text, channel, sender, target, zoneChannelID, localID, name,
