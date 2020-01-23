@@ -35,7 +35,7 @@ local function Addon_OnEvent(self, event, ...)
     elseif event == "PLAYER_LOGIN" then
         ns:init();
         C_ChatInfo.RegisterAddonMessagePrefix(Pulse_DKP.channel);
-
+        ns:PD_AddMiniMap();
     elseif (event == 'LOOT_READY') then
         ns:dkpLootOpen();
     end

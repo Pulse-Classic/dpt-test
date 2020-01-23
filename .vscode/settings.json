@@ -38,6 +38,7 @@
         "UIDropDownMenu_CreateInfo",
         "UIDropDownMenu_AddButton",
         "C_Item",
-        "time"
+        "time",
+        "Minimap"
     ]
 }

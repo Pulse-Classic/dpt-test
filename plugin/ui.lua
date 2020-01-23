@@ -25,6 +25,7 @@ function PD_Frame()
         PD_addNewRaidFrame();
         PD_addCurrentRaidFrame();
     end
+
     PD_BindCurrentRaidDetails();
     PulseDkpMainFrame:Show();
 
@@ -38,6 +39,20 @@ function PD_registerDraggable()
     end);
     PulseDkpMainFrame:SetScript("OnMouseUp",
                                 PulseDkpMainFrame.StopMovingOrSizing);
+end
+function ns:PD_AddMiniMap()
+    local btn = CreateFrame("Button", "PulseDkpMiniMap", Minimap);
+    btn:SetNormalTexture("Interface\\AddOns\\Pulse_dkp\\media\\pulse_dkp")
+    btn:Show();
+    btn:SetText("PP");
+    btn:SetPoint("TOPLEFT", 0, 0);
+end
+function PD_MinimapClick()
+    if PulseDkpMainFrame ~= nil and PulseDkpMainFrame:IsVisible() then
+        PulseDkpMainFrame:Hide();
+    else
+        PD_Frame();
+    end
 end
 -- function PD_registerResizeable()
 --    PulseDkpMainFrame:SetResizable(true)

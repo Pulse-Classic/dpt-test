@@ -1,0 +1,68 @@
+<Ui>
+
+	<Button name="PulseDkpMinimapFrame" toplevel="true" frameStrata="HIGH" parent="Minimap" enableMouse="true" movable="true">
+		<Size>
+			<AbsDimension x="33" y="33"/>
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT">
+				<Offset>
+					<AbsDimension x="-15" y="0"/>
+				</Offset>
+			</Anchor>
+		</Anchors>
+		<Layers>
+			<Layer level="BACKGROUND">
+				<Texture name="PulseDkpMinimapIcon" file="Interface\AddOns\Pulse_Dkp\media\pulse_dkp">
+					<Size>
+						<AbsDimension x="21" y="21"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT">
+							<Offset>
+								<AbsDimension x="7" y="-6"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</Texture>
+			</Layer>
+			<Layer level="ARTWORK">
+				<Texture file="Interface\Minimap\MiniMap-TrackingBorder">
+					<Size>
+						<AbsDimension x="56" y="56"/>
+					</Size>
+					<Anchors>
+						<Anchor point="TOPLEFT"/>
+					</Anchors>
+				</Texture>
+			</Layer>		
+		</Layers>
+		<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
+		<Scripts>
+			<OnLoad>
+				self:RegisterForClicks("LeftButtonUp")
+				self:RegisterForDrag("LeftButton")
+			</OnLoad>
+			<OnMouseDown>
+				PulseDkpMinimapIcon:SetTexCoord(.075,.925,.075,.925)
+			</OnMouseDown>
+			<OnMouseUp>
+				PulseDkpMinimapIcon:SetTexCoord(0,1,0,1)
+			</OnMouseUp>			
+			<OnDragStart>
+				self:LockHighlight()
+				<!-- ItemRack.StartTimer("MinimapDragging") -->
+				PulseDkpMinimapIcon:SetTexCoord(.075,.925,.075,.925)
+			</OnDragStart>
+			<OnDragStop>
+				<!-- ItemRack.StopTimer("MinimapDragging") -->
+				self:UnlockHighlight()
+				PulseDkpMinimapIcon:SetTexCoord(0,1,0,1)
+			</OnDragStop>
+			<OnClick>
+				PD_MinimapClick()
+				PulseDkpMinimapIcon:SetTexCoord(0,1,0,1)
+			</OnClick>
+		</Scripts>
+	</Button>
+    </Ui>
