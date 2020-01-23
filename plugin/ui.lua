@@ -146,9 +146,9 @@ function PD_addNewRaidFrame()
         PD_BindCurrentRaidDetails();
         PulseDkpNewRaidFrame:Hide();
         if (currentRaid.startedOn ~= nil) then
-             PulseDkpStartRaidButton:Hide(); 
-             PulseDkpEndRaidButton:Show();
-             ns:RegisterLootReady();
+            PulseDkpStartRaidButton:Hide();
+            PulseDkpEndRaidButton:Show();
+            ns:RegisterLootReady();
         end
         PulseDkpCurrentRaidFrame:Show();
     end);
@@ -273,6 +273,7 @@ function PD_addCurrentRaidFrame()
     PD_RaidDoneButton:SetScript("OnMouseUp", function(self, button)
         currentRaid = nil;
         selectedRaid = nil;
+        PulseDkpLoadLastButton:SetEnabled(ns:GetLastUnfinishedRaid() ~= nil);
         PulseDkpNewButton:SetEnabled(false);
         UIDropDownMenu_SetText(PulseDkpNewRaidDropDown, "Select a raid..")
         PD_CurrentRaid:Hide();
