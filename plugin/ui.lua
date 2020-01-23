@@ -145,6 +145,11 @@ function PD_addNewRaidFrame()
         ns:SetCurrentRaid(currentRaid);
         PD_BindCurrentRaidDetails();
         PulseDkpNewRaidFrame:Hide();
+        if (currentRaid.startedOn ~= nil) then
+             PulseDkpStartRaidButton:Hide(); 
+             PulseDkpEndRaidButton:Show();
+             ns:RegisterLootReady();
+        end
         PulseDkpCurrentRaidFrame:Show();
     end);
     PD_addNewRaidDropDown();
