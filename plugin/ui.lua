@@ -228,7 +228,7 @@ function PD_addCurrentRaidFrame()
                      "PulseDkpCurrentRaid_RaidStatus", "OVERLAY",
                      "GameFontNormal");
     fsRS:SetFont("Fonts\\FRIZQT__.TTF", 12);
-    fsRS:SetPoint("TOPLEFT", 10, -60);
+    fsRS:SetPoint("TOPLEFT", 10, -80);
     fsRS:SetWidth(PD_CurrentRaid:GetWidth() - 100);
     fsRS:SetJustifyH("LEFT");
     fsRS:SetWordWrap(false);
