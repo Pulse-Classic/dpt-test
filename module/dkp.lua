@@ -39,9 +39,10 @@ SlashCmdList.PULSE_DKP = function(msg)
         if (string.sub(item, 0, 1) ~= '|') then
             _, _, charLink, item = string.find(args, "(%w+)%s(.*)");
         end
-        if (cmd == 'loot') then
-            SendChatMessage(charLink .. ' wins ' .. item .. ' Congrats!', RAID);
-        end
+        -- only one add on for spamming loot winners for now.
+        -- if (cmd == 'loot') then
+        --     SendChatMessage(charLink .. ' wins ' .. item .. ' Congrats!', RAID);
+        -- end
         local itemObj = {};
         local itemString, itemName = item:match("|H(.*)|h%[(.*)%]|h");
         itemObj.itemString = itemString;

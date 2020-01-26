@@ -9,7 +9,7 @@ function ns:notify(cmd, args)
     --                             UnitName("player"));
 
     
-    -- C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "RAID");
+    C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "RAID");
 end
 function ns:messageRecieved(...)
     local prefix, text, channel, sender, target, zoneChannelID, localID, name,
