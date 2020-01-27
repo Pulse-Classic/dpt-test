@@ -142,6 +142,7 @@ function PD_addNewRaidFrame()
     PD_LoadBtn:SetEnabled(ns:GetLastUnfinishedRaid() ~= nil);
     PD_LoadBtn:SetScript("OnMouseUp", function(self, button)
         currentRaid = ns:GetLastUnfinishedRaid();
+        if (currentRaid == nil) then return; end
         ns:SetCurrentRaid(currentRaid);
         PD_BindCurrentRaidDetails();
         PulseDkpNewRaidFrame:Hide();
