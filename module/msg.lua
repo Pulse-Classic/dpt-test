@@ -14,7 +14,7 @@ end
 function ns:messageRecieved(...)
     local prefix, text, channel, sender, target, zoneChannelID, localID, name,
           instanceID = ...;
-    print(...);
+    -- print(...);
     local arg = ns:parseMessage(text)
     if (arg == nil or arg.cmd == nil) then return end
 

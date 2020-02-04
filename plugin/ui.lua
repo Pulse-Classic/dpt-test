@@ -300,17 +300,23 @@ function PD_addCurrentRaidFrame()
                            "UIPanelScrollFrameTemplate");
     sf:SetPoint("TOPLEFT", 10, -140);
     sf:SetSize((PulseDkpMainFrame:GetWidth() / 2 - 37),
-               PulseDkpMainFrame:GetHeight() - 185);
+               (PulseDkpMainFrame:GetHeight() - 185));
 
     -- EditBox
-    local eb = CreateFrame("EditBox", "PulseDkpDropsBox", PulseDkpDropsFrame);
-    eb:SetSize(sf:GetSize());
-    eb:SetMultiLine(true);
-    eb:SetAutoFocus(false); -- dont automatically focus
-    eb:SetEnabled(false);
-    eb:SetFontObject("ChatFontNormal");
-    sf:SetScrollChild(eb)
+    -- local eb = CreateFrame("EditBox", "PulseDkpDropsBox", PulseDkpDropsFrame);
+    -- eb:SetSize(sf:GetWidth(), sf:GetHeight() / 2);
+    -- eb:SetMultiLine(true);
+    -- eb:SetAutoFocus(false); -- dont automatically focus
+    -- eb:SetEnabled(false);
+    -- eb:SetFontObject("ChatFontNormal");
+    -- sf:SetScrollChild(eb)
 
+    local dropsHtml = CreateFrame("SimpleHTML", "PulseDkpDropsHtml",
+                                  PulseDkpDropsFrame);
+    dropsHtml:SetSize(sf:GetSize());
+    dropsHtml:SetFontObject("ChatFontNormal");
+    dropsHtml:SetScript("OnHyperlinkClick", PD_LootLinkClicked);
+    sf:SetScrollChild(dropsHtml)
     -- raiders header
     local raidersHeader = PD_CurrentRaid:CreateFontString(
                               "PulseDkpEventRaidersHeader", "OVERLAY",
@@ -341,7 +347,82 @@ function PD_addCurrentRaidFrame()
     rf:SetScrollChild(rb)
     PD_CurrentRaid:Hide();
 end
+function PD_LootLinkClicked(...)
+    local self, link, text, button = ...;
+    if (link == nil) then return; end
 
+    local name, mob = link:match("(.*)//(.*)");
+    PD_OpenRollFrame(name, mob);
+end
+
+function PD_addRollFrameTitle(item)
+    local PD_T = CreateFrame("Frame", "PulseDkpRollTitleFrame",
+                             PulseDkpRollFrame);
+    PD_T:SetSize(PulseDkpRollFrame:GetWidth(), 30);
+    PD_T:SetPoint("TOPLEFT", 0, 0);
+
+    local eb = PD_T:CreateFontString("PD_RollTitleFont", "OVERLAY",
+                                     "GameFontNormal");
+    eb:SetFont("Fonts\\FRIZQT__.TTF", 16);
+    eb:SetPoint("TOPLEFT", 10, -10);
+    eb:SetWidth(PulseDkpRollFrame:GetWidth());
+    eb:SetJustifyH("LEFT");
+    eb:SetWordWrap(false);
+    eb:SetText(item);
+
+end
+
+function PD_OpenRollFrame(item, mobid)
+    if not PulseDkpRollFrame then
+        local PulseDkpRollFrame = CreateFrame("Frame", "PulseDkpRollFrame",
+                                              UIParent);
+    end
+
+    PulseDkpRollFrame:SetSize(400, 600);
+    PulseDkpRollFrame:SetPoint('RIGHT', PulseDkpMainFrame, 400, 0);
+    PulseDkpRollFrame:SetBackdrop({
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+        edgeSize = 16,
+        insets = {left = 0, right = 0, top = 0, bottom = 0}
+    });
+    PulseDkpRollFrame:SetBackdropBorderColor(0, .44, .87, 0.5); -- darkblue
+
+    -- PD_registerRollframeDraggable();
+    PD_registerRollFrameCloseButton();
+    PD_addRollFrameTitle(item);
+
+    local rollBtn = CreateFrame("Button", "PulsDkpStartRollBtn",
+                                PulseDkpRollFrame, 'UIPanelButtonTemplate');
+    rollBtn:SetText("roll");
+    rollBtn:SetSize(50, 30);
+    rollBtn:SetPoint('CENTER');
+    rollBtn:SetScript("OnMouseUp", function(...)
+
+        SendChatMessage("Rolling for " .. item, "RAID_WARNING");
+    end);
+    PulseDkpRollFrame:Show();
+end
+-- function PD_registerRollframeDraggable()
+--     -- Movable
+--     PulseDkpRollFrame:SetMovable(true);
+--     PulseDkpRollFrame:SetClampedToScreen(true);
+--     PulseDkpRollFrame:SetScript("OnMouseDown", function(self, button)
+--         if button == "LeftButton" then self:StartMoving() end
+--     end);
+--     PulseDkpRollFrame:SetScript("OnMouseUp",
+--                                 PulseDkpRollFrame.StopMovingOrSizing);
+-- end
+function PD_registerRollFrameCloseButton()
+    local PD_CloseBtn = CreateFrame("Button", "PulseDkpRollFrameCloseButton",
+                                    PulseDkpRollFrame, "UIPanelButtonTemplate");
+    PD_CloseBtn:SetPoint("TOPRIGHT", 1, 17);
+    PD_CloseBtn:SetSize(20, 20);
+    PD_CloseBtn:SetText("X");
+
+    PD_CloseBtn:SetScript("OnMouseUp",
+                          function(self, button) PulseDkpRollFrame:Hide(); end);
+end
 function PD_BindCurrentRaidDetails()
     currentRaid = ns:GetCurrentRaid();
 
@@ -374,14 +455,22 @@ function PD_BindCurrentRaidDetails()
 end
 
 function PD_addDropsToFrame()
-    local h = '';
+    local h = '<html><body>';
     if currentRaid ~= nil and currentRaid.drops ~= nil then
         for i = 1, #currentRaid.drops do
             local d = currentRaid.drops[i];
-            h = h .. i .. ': ' .. d.item.item .. '\n';
+            local linktext = d.item.item .. '//';
+            local m = currentRaid.drops[i].mob;
+            if (m ~= nil) then linktext = linktext .. m.id; end
+
+            h = h .. "<p><a href='" .. linktext .. "'>" .. d.item.item ..
+                    "</a></p>";
+
         end
     end
-    PulseDkpDropsBox:SetText(h);
+
+    h = h .. '</body></html>';
+    PulseDkpDropsHtml:SetText(h);
 end
 
 function PD_addRaidersToFrame()
