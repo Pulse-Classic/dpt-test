@@ -439,6 +439,8 @@ end
 -- end
 
 local currentItem;
+local rollWinner;
+local rollers = {};
 function PD_OpenRollFrame(item, mobid)
     currentItem = item;
     if not PulseDkpRollFrame then
@@ -476,14 +478,69 @@ function PD_OpenRollFrame(item, mobid)
 
     PD_AddRollersFrame();
     PD_addRollFrameTitle(item);
+    PulseDkpRollFrame:SetScript("OnEvent", PulseDkpRollFrame_OnEvent)
     PulseDkpRollFrame:Show();
 end
 function PD_StartRoll()
+    PulseDkpRollFrame:RegisterEvent('CHAT_MSG_SYSTEM');
+    rollWinner = nil;
     SendChatMessage("Rolling for " .. currentItem, "RAID_WARNING");
 end
 function PD_EndRoll()
     SendChatMessage("Roll for " .. currentItem .. " ended.", "RAID_WARNING");
+    rollWinner = nil;
+    PulseDkpRollFrame:UnregisterEvent('CHAT_MSG_SYSTEM');
 end
+function PulseDkpRollFrame_OnEvent(self, event, ...)
+
+    if (event == "CHAT_MSG_SYSTEM") then
+        local msg = ...;
+        if (msg:match("(.*)%srolls%s(.*)") ~= nil) then
+            PD_UpdateParseRollString(msg:match("(.*)%srolls%s(.*)"))
+        end
+    end
+end
+function PD_UpdateParseRollString(name, unparsedRoll)
+    print(name);
+    local roll, range = unparsedRoll:match("(.*)%s(.*)");
+
+    if (range ~= '(1-100)') then return; end
+    local found = false;
+    for i = 1, #rollers do
+        if (rollers[i].name == name) then
+            found = true;
+            break
+        end
+    end
+    if (found == true) then return; end
+    tinsert(rollers, {name = name, roll = roll, lp = 0});
+    table.sort(rollers, PD_SortRolls);
+    print(json.encode(rollers));
+    PD_UpdateRollersHtml();
+end
+function PD_SortRolls(a, b)
+    if a.lp == b.lp then return a.roll > b.roll end
+    return a.lp > b.lp;
+end
+
+function PD_UpdateRollersHtml()
+
+    if (rollers == nil or #rollers == 0) then return; end
+
+    local html = '<html><body>';
+    for i = 1, #rollers do
+        local a = '<p><a href="' .. rollers[i].name .. '">';
+
+        if (rollers[i].name == rollWinner) then a = a .. '>>>'; end
+        a = a .. rollers[i].name .. ' rolled ' .. rollers[i].roll ..
+                ' with a loot priority of (' .. rollers[i].lp .. ')</a></p>';
+        html = html .. a
+    end
+    html = html .. '</body></html>';
+    PulseDkpRollersHtml:SetText(html);
+
+end
+
 -- function PD_registerRollframeDraggable()
 --     -- Movable
 --     PulseDkpRollFrame:SetMovable(true);
@@ -513,7 +570,14 @@ function PD_AddRollersFrame()
                                             PulseDkpRollFrame);
     PulseDkpRollersHtml:SetSize(sf:GetSize());
     PulseDkpRollersHtml:SetFontObject("ChatFontNormal");
+    PulseDkpRollersHtml:SetScript("OnHyperlinkClick", PD_RollerLinkClicked);
     sf:SetScrollChild(PulseDkpRollersHtml)
+end
+function PD_RollerLinkClicked(...)
+    local self, link, text, button = ...;
+    if (link == nil) then return; end
+    rollWinner = link;
+    PD_UpdateRollersHtml();
 end
 function PD_registerRollFrameCloseButton()
     local PD_CloseBtn = CreateFrame("Button", "PulseDkpRollFrameCloseButton",
