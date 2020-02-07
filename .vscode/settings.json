@@ -39,6 +39,11 @@
         "UIDropDownMenu_AddButton",
         "C_Item",
         "time",
-        "Minimap"
+        "Minimap",
+        "GetNumLootItems",
+        "GetLootSlotInfo",
+        "IsAltKeyDown",
+        "IsShiftKeyDown",
+        "GetLootSlotLink"
     ]
 }
