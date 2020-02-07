@@ -317,7 +317,7 @@ function PD_addCurrentRaidFrame()
                                   PulseDkpDropsFrame);
     dropsHtml:SetSize(sf:GetSize());
     dropsHtml:SetFontObject("ChatFontNormal");
-    dropsHtml:SetScript("OnHyperlinkClick", PD_LootLinkClicked);
+    -- dropsHtml:SetScript("OnHyperlinkClick", PD_LootLinkClicked);
     sf:SetScrollChild(dropsHtml)
     -- raiders header
     local raidersHeader = PD_CurrentRaid:CreateFontString(
@@ -430,14 +430,104 @@ function PD_addRaidersToFrame()
     PulseDkpRaidersBox:SetText(h);
 end
 
-function PD_LootLinkClicked(...)
-    local self, link, text, button = ...;
-    if (link == nil) then return; end
+-- function PD_LootLinkClicked(...)
+--     local self, link, text, button = ...;
+--     if (link == nil) then return; end
 
-    local name, mob = link:match("(.*)//(.*)");
-    PD_OpenRollFrame(name, mob);
+--     local name, mob = link:match("(.*)//(.*)");
+--     PD_OpenRollFrame(name, mob);
+-- end
+
+local currentItem;
+function PD_OpenRollFrame(item, mobid)
+    currentItem = item;
+    if not PulseDkpRollFrame then
+        local PulseDkpRollFrame = CreateFrame("Frame", "PulseDkpRollFrame",
+                                              UIParent);
+    end
+    PulseDkpRollFrame:SetSize(400, 600);
+    PulseDkpRollFrame:SetPoint('RIGHT', PulseDkpMainFrame, 400, 0);
+    PulseDkpRollFrame:SetBackdrop({
+        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+        edgeSize = 16,
+        insets = {left = 0, right = 0, top = 0, bottom = 0}
+    });
+    PulseDkpRollFrame:SetBackdropBorderColor(0, .44, .87, 0.5); -- darkblue
+
+    -- PD_registerRollframeDraggable();
+    PD_registerRollFrameCloseButton();
+
+    local PulsDkpStartRollBtn = CreateFrame("Button", "PulsDkpStartRollBtn",
+                                            PulseDkpRollFrame,
+                                            'UIPanelButtonTemplate');
+    PulsDkpStartRollBtn:SetText("Start roll");
+    PulsDkpStartRollBtn:SetSize(60, 30);
+    PulsDkpStartRollBtn:SetPoint('TOPLEFT', 10, -40);
+    PulsDkpStartRollBtn:SetScript("OnMouseUp", function(...) PD_StartRoll(); end);
+
+    local PulsDkpEndRollBtn = CreateFrame("Button", "PulsDkpEndRollBtn",
+                                          PulseDkpRollFrame,
+                                          'UIPanelButtonTemplate');
+    PulsDkpEndRollBtn:SetText("End roll");
+    PulsDkpEndRollBtn:SetSize(60, 30);
+    PulsDkpEndRollBtn:SetPoint('TOPRIGHT', -10, -40);
+    PulsDkpEndRollBtn:SetScript("OnMouseUp", function(...) PD_EndRoll(); end);
+
+    PD_AddRollersFrame();
+    PD_addRollFrameTitle(item);
+    PulseDkpRollFrame:Show();
 end
+function PD_StartRoll()
+    SendChatMessage("Rolling for " .. currentItem, "RAID_WARNING");
+end
+function PD_EndRoll()
+    SendChatMessage("Roll for " .. currentItem .. " ended.", "RAID_WARNING");
+end
+-- function PD_registerRollframeDraggable()
+--     -- Movable
+--     PulseDkpRollFrame:SetMovable(true);
+--     PulseDkpRollFrame:SetClampedToScreen(true);
+--     PulseDkpRollFrame:SetScript("OnMouseDown", function(self, button)
+--         if button == "LeftButton" then self:StartMoving() end
+--     end);
+--     PulseDkpRollFrame:SetScript("OnMouseUp",
+--                                 PulseDkpRollFrame.StopMovingOrSizing);
+-- end
+function PD_AddRollersFrame()
+    local ech = PulseDkpRollFrame:CreateFontString(
+                    "PulseDkpRollersConsoleHeader", "OVERLAY", "GameFontNormal");
+    ech:SetFont("Fonts\\FRIZQT__.TTF", 12);
+    ech:SetPoint("TOPLEFT", 10, -80);
+    ech:SetWidth((PulseDkpMainFrame:GetWidth() / 2) - 10);
+    ech:SetJustifyH("CENTER");
+    ech:SetWordWrap(false);
+    ech:SetText("Rollers:");
 
+    local sf = CreateFrame("ScrollFrame", "PulseDkpRollersScrollFrame",
+                           PulseDkpRollFrame, "UIPanelScrollFrameTemplate");
+    sf:SetPoint("TOPLEFT", 10, -100);
+    sf:SetSize((PulseDkpRollFrame:GetWidth() - 35), 200);
+
+    local PulseDkpRollersHtml = CreateFrame("SimpleHTML", "PulseDkpRollersHtml",
+                                            PulseDkpRollFrame);
+    PulseDkpRollersHtml:SetSize(sf:GetSize());
+    PulseDkpRollersHtml:SetFontObject("ChatFontNormal");
+    sf:SetScrollChild(PulseDkpRollersHtml)
+end
+function PD_registerRollFrameCloseButton()
+    local PD_CloseBtn = CreateFrame("Button", "PulseDkpRollFrameCloseButton",
+                                    PulseDkpRollFrame, "UIPanelButtonTemplate");
+    PD_CloseBtn:SetPoint("TOPRIGHT", 1, 17);
+    PD_CloseBtn:SetSize(20, 20);
+    PD_CloseBtn:SetText("X");
+
+    PD_CloseBtn:SetScript("OnMouseUp",
+                          function(self, button) PD_CloseRollFrame(); end);
+end
+function PD_CloseRollFrame()
+    if (PulseDkpRollFrame) then PulseDkpRollFrame:Hide(); end
+end
 function PD_addRollFrameTitle(item)
     if (not PulseDkpRollTitleFrame) then
         local PD_T = CreateFrame("Frame", "PulseDkpRollTitleFrame",
@@ -456,59 +546,4 @@ function PD_addRollFrameTitle(item)
     end
     PD_RollTitleFont:SetText(item);
 
-end
-
-function PD_OpenRollFrame(item, mobid)
-    if not PulseDkpRollFrame then
-        local PulseDkpRollFrame = CreateFrame("Frame", "PulseDkpRollFrame",
-                                              UIParent);
-    end
-    PulseDkpRollFrame:SetSize(400, 600);
-    PulseDkpRollFrame:SetPoint('RIGHT', PulseDkpMainFrame, 400, 0);
-    PulseDkpRollFrame:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        edgeSize = 16,
-        insets = {left = 0, right = 0, top = 0, bottom = 0}
-    });
-    PulseDkpRollFrame:SetBackdropBorderColor(0, .44, .87, 0.5); -- darkblue
-
-    -- PD_registerRollframeDraggable();
-    PD_registerRollFrameCloseButton();
-
-    local rollBtn = CreateFrame("Button", "PulsDkpStartRollBtn",
-                                PulseDkpRollFrame, 'UIPanelButtonTemplate');
-    rollBtn:SetText("roll");
-    rollBtn:SetSize(50, 30);
-    rollBtn:SetPoint('CENTER');
-    rollBtn:SetScript("OnMouseUp", function(...)
-
-        SendChatMessage("Rolling for " .. item, "RAID_WARNING");
-    end);
-
-    PD_addRollFrameTitle(item);
-    PulseDkpRollFrame:Show();
-end
--- function PD_registerRollframeDraggable()
---     -- Movable
---     PulseDkpRollFrame:SetMovable(true);
---     PulseDkpRollFrame:SetClampedToScreen(true);
---     PulseDkpRollFrame:SetScript("OnMouseDown", function(self, button)
---         if button == "LeftButton" then self:StartMoving() end
---     end);
---     PulseDkpRollFrame:SetScript("OnMouseUp",
---                                 PulseDkpRollFrame.StopMovingOrSizing);
--- end
-function PD_registerRollFrameCloseButton()
-    local PD_CloseBtn = CreateFrame("Button", "PulseDkpRollFrameCloseButton",
-                                    PulseDkpRollFrame, "UIPanelButtonTemplate");
-    PD_CloseBtn:SetPoint("TOPRIGHT", 1, 17);
-    PD_CloseBtn:SetSize(20, 20);
-    PD_CloseBtn:SetText("X");
-
-    PD_CloseBtn:SetScript("OnMouseUp",
-                          function(self, button) PD_CloseRollFrame(); end);
-end
-function PD_CloseRollFrame()
-    if (PulseDkpRollFrame) then PulseDkpRollFrame:Hide(); end
 end

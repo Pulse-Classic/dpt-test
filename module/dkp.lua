@@ -3,7 +3,7 @@ local temp = {};
 local realm = GetRealmName();
 local char = UnitName('player');
 local _, ns = ...;
-
+local currentItem;
 SlashCmdList.PULSE_DKP = function(msg)
     local _, _, cmd, args = string.find(msg, "%s?(%w+)%s?(.*)");
 
