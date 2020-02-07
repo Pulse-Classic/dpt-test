@@ -487,8 +487,24 @@ function PD_StartRoll()
     SendChatMessage("Rolling for " .. currentItem, "RAID_WARNING");
 end
 function PD_EndRoll()
-    SendChatMessage("Roll for " .. currentItem .. " ended.", "RAID_WARNING");
+    if rollWinner ~= nil then
+        local itemObj = {};
+        local itemString, itemName = currentItem:match("|H(.*)|h%[(.*)%]|h");
+        itemObj.itemString = itemString;
+        itemObj.name = itemName;
+        itemObj.time = time();
+        ns:DistributeLoot(itemObj, rollWinner);
+        SendChatMessage("Roll for " .. currentItem ..
+                            " ended. Congratulations to " .. rollWinner .. "!",
+                        "RAID_WARNING");
+
+    else
+        SendChatMessage("Roll for " .. currentItem .. " ended. No interest.",
+                        "RAID_WARNING");
+    end
     rollWinner = nil;
+    currentItem = nil;
+    rollers = {};
     PulseDkpRollFrame:UnregisterEvent('CHAT_MSG_SYSTEM');
 end
 function PulseDkpRollFrame_OnEvent(self, event, ...)
