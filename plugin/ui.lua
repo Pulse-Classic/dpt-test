@@ -296,22 +296,12 @@ function PD_addCurrentRaidFrame()
     ech:SetWordWrap(false);
     ech:SetText("Drops this raid");
     -- event console
-
+    -- drops
     local sf = CreateFrame("ScrollFrame", "PulseDkpDropsFrame",
                            PulseDkpCurrentRaidFrame,
                            "UIPanelScrollFrameTemplate");
     sf:SetPoint("TOPLEFT", 10, -140);
-    sf:SetSize((PulseDkpMainFrame:GetWidth() / 2 - 37),
-               (PulseDkpMainFrame:GetHeight() - 185));
-
-    -- EditBox
-    -- local eb = CreateFrame("EditBox", "PulseDkpDropsBox", PulseDkpDropsFrame);
-    -- eb:SetSize(sf:GetWidth(), sf:GetHeight() / 2);
-    -- eb:SetMultiLine(true);
-    -- eb:SetAutoFocus(false); -- dont automatically focus
-    -- eb:SetEnabled(false);
-    -- eb:SetFontObject("ChatFontNormal");
-    -- sf:SetScrollChild(eb)
+    sf:SetSize((PulseDkpMainFrame:GetWidth() / 2 - 37), 200);
 
     local dropsHtml = CreateFrame("SimpleHTML", "PulseDkpDropsHtml",
                                   PulseDkpDropsFrame);
@@ -319,6 +309,30 @@ function PD_addCurrentRaidFrame()
     dropsHtml:SetFontObject("ChatFontNormal");
     -- dropsHtml:SetScript("OnHyperlinkClick", PD_LootLinkClicked);
     sf:SetScrollChild(dropsHtml)
+
+    -- winners
+
+    local PulseDkpLootWinnersFrame = CreateFrame("ScrollFrame",
+                                                 "PulseDkpLootWinnersFrame",
+                                                 PulseDkpCurrentRaidFrame,
+                                                 "UIPanelScrollFrameTemplate");
+    PulseDkpLootWinnersFrame:SetPoint("TOPLEFT", 10, -375);
+    PulseDkpLootWinnersFrame:SetSize((PulseDkpMainFrame:GetWidth() / 2 - 37),
+                                     180);
+    local PulseDkpWinnersHtml = CreateFrame("SimpleHTML", "PulseDkpWinnersHtml",
+                                            PulseDkpLootWinnersFrame);
+    PulseDkpWinnersHtml:SetSize(sf:GetSize());
+    PulseDkpWinnersHtml:SetFontObject("ChatFontNormal");
+    PulseDkpLootWinnersFrame:SetScrollChild(PulseDkpWinnersHtml);
+    local ech = PD_CurrentRaid:CreateFontString(
+                    "PulseDkpRollWInnersConsoleHeader", "OVERLAY",
+                    "GameFontNormal");
+    ech:SetFont("Fonts\\FRIZQT__.TTF", 14);
+    ech:SetPoint("TOPLEFT", 10, -355);
+    ech:SetWidth((PulseDkpMainFrame:GetWidth() / 2) - 10);
+    ech:SetJustifyH("CENTER");
+    ech:SetWordWrap(false);
+    ech:SetText("Winners this raid");
     -- raiders header
     local raidersHeader = PD_CurrentRaid:CreateFontString(
                               "PulseDkpEventRaidersHeader", "OVERLAY",
@@ -377,10 +391,29 @@ function PD_BindCurrentRaidDetails()
         PulseDkpCurrentRaid_RaidStart:SetText(
             "Raid haven't started yet - good luck!");
     end
+    PD_AddWinnersToFrame();
     PD_addDropsToFrame();
     PD_addRaidersToFrame();
 end
+function PD_AddWinnersToFrame()
+    local h = '<html><body>';
+    if currentRaid ~= nil and currentRaid.lootWinners ~= nil then
+        for i = 1, #currentRaid.lootWinners do
+            local d = currentRaid.lootWinners[i];
+            local linktext = d.item.name .. '//' .. d.item.time .. '//' ..
+                                 d.chars;
+            local m = currentRaid.drops[i].mob;
+            if (m ~= nil) then linktext = linktext .. m.id; end
 
+            h = h .. "<p><a href='" .. linktext .. "'>" .. d.chars .. ' won ' ..
+                    d.itemLink .. "</a></p>";
+
+        end
+    end
+
+    h = h .. '</body></html>';
+    PulseDkpWinnersHtml:SetText(h);
+end
 function PD_addDropsToFrame()
     local h = '<html><body>';
     if currentRaid ~= nil and currentRaid.drops ~= nil then
@@ -493,10 +526,11 @@ function PD_EndRoll()
         itemObj.itemString = itemString;
         itemObj.name = itemName;
         itemObj.time = time();
-        ns:DistributeLoot(itemObj, rollWinner);
+        ns:DistributeLoot(itemObj, rollWinner, currentItem);
         SendChatMessage("Roll for " .. currentItem ..
                             " ended. Congratulations to " .. rollWinner .. "!",
                         "RAID_WARNING");
+        PD_AddWinnersToFrame();
 
     else
         SendChatMessage("Roll for " .. currentItem .. " ended. No interest.",

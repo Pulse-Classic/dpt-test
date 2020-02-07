@@ -39,22 +39,18 @@ SlashCmdList.PULSE_DKP = function(msg)
         if (string.sub(item, 0, 1) ~= '|') then
             _, _, charLink, item = string.find(args, "(%w+)%s(.*)");
         end
-        -- only one add on for spamming loot winners for now.
-        -- if (cmd == 'loot') then
-        --     SendChatMessage(charLink .. ' wins ' .. item .. ' Congrats!', RAID);
-        -- end
+
         local itemObj = {};
         local itemString, itemName = item:match("|H(.*)|h%[(.*)%]|h");
         itemObj.itemString = itemString;
         itemObj.name = itemName;
         itemObj.time = time();
-        -- itemObj.name, itemObj.link, itemObj.rarity, itemObj.level, itemObj.minLevel, itemObj.type, itemObj.subType, itemObj.stackCount, itemObj.equipLoc, itemObj.texture, itemObj.sellPrice =
-        -- GetItemInfo(itemName);
+
         if (itemObj.name ~= nil) then
             print(itemObj);
-            ns:DistributeLoot(itemObj, charLink);
+            ns:DistributeLoot(itemObj, charLink, item);
         end
-        -- KethoEditBox_Show(json.encode(temp));
+
     elseif cmd == 'create' then
         ns:CreateRaid(msg, args);
 
@@ -198,12 +194,13 @@ function ns:AddDrop(mob, item)
         end
     end
 end
-function ns:DistributeLoot(item, winner)
+function ns:DistributeLoot(item, winner, itemLink)
     if temp == nil then return; end
 
     if temp.lootWinners == nil then temp.lootWinners = {}; end
     local lootWinner = {};
     lootWinner.item = item;
+    lootWinner.itemLink = itemLink;
     lootWinner.chars = winner;
 
     tinsert(temp.lootWinners, lootWinner);
@@ -309,7 +306,7 @@ function ns:UpdateDropFromOther(drop)
             break
         end
     end
-    if (dropIndex ~= nil) then return; end  
+    if (dropIndex ~= nil) then return; end
 
     local item = {};
     for key, value in pairs(drop) do
@@ -317,7 +314,7 @@ function ns:UpdateDropFromOther(drop)
     end
 
     local d = {mob = {name = mobname, id = mobid}, item = item};
-    tinsert(temp.drops, d);    
+    tinsert(temp.drops, d);
     PD_BindCurrentRaidDetails();
 end
 SLASH_PULSE_DKP1 = "/pd";
