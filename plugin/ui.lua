@@ -3,6 +3,12 @@ local selectedRaid;
 local currentRaid;
 local json = _G["json"];
 local raiders;
+local currentItem;
+local rollWinner;
+local rollers = {};
+local currentMob = {};
+local lootWinner = nil;
+local newLootWinner = nil;
 function PD_Frame()
     if not PulseDkpMainFrame then
         local PulseDkpMainFrame = CreateFrame("Frame", "PulseDkpMainFrame",
@@ -323,6 +329,7 @@ function PD_addCurrentRaidFrame()
                                             PulseDkpLootWinnersFrame);
     PulseDkpWinnersHtml:SetSize(sf:GetSize());
     PulseDkpWinnersHtml:SetFontObject("ChatFontNormal");
+    PulseDkpWinnersHtml:SetScript("OnHyperlinkClick", PD_WinnerLinkClicked);
     PulseDkpLootWinnersFrame:SetScrollChild(PulseDkpWinnersHtml);
     local ech = PD_CurrentRaid:CreateFontString(
                     "PulseDkpRollWInnersConsoleHeader", "OVERLAY",
@@ -400,8 +407,7 @@ function PD_AddWinnersToFrame()
     if currentRaid ~= nil and currentRaid.lootWinners ~= nil then
         for i = 1, #currentRaid.lootWinners do
             local d = currentRaid.lootWinners[i];
-            local linktext = d.item.name .. '//' .. d.item.time .. '//' ..
-                                 d.chars;
+            local linktext = d.item.name .. '//';
             local m = currentRaid.drops[i].mob;
             if (m ~= nil) then linktext = linktext .. m.id; end
 
@@ -463,19 +469,28 @@ function PD_addRaidersToFrame()
     PulseDkpRaidersBox:SetText(h);
 end
 
--- function PD_LootLinkClicked(...)
---     local self, link, text, button = ...;
---     if (link == nil) then return; end
+function PD_WinnerLinkClicked(...)
+    local self, link, text, button = ...;
+    if (link == nil) then return; end
 
---     local name, mob = link:match("(.*)//(.*)");
---     PD_OpenRollFrame(name, mob);
--- end
+    local name, mob = link:match("(.*)//(.*)");
+    for i = 1, #currentRaid.lootWinners do
+        local loot = currentRaid.lootWinners[i];
+        if (loot.mobid == mob and loot.item.name == name) then
 
-local currentItem;
-local rollWinner;
-local rollers = {};
-function PD_OpenRollFrame(item, mobid)
+            PD_OpenRollFrame(loot.itemLink,
+                             {id = loot.mobid, name = loot.mobname}, loot.chars);
+            break
+        end
+    end
+    -- PD_OpenRollFrame(name, {id = mob, name = ''}, true);
+end
+
+function PD_OpenRollFrame(item, mob, winner)
     currentItem = item;
+    currentMob = mob;
+    lootWinner = winner;
+
     if not PulseDkpRollFrame then
         local PulseDkpRollFrame = CreateFrame("Frame", "PulseDkpRollFrame",
                                               UIParent);
@@ -523,9 +538,17 @@ function PD_OpenRollFrame(item, mobid)
             PD_EndRoll();
         end);
     end
-    PulsDkpStartRollBtn:Show();
-    PulsDkpOffSpecRollBtn:Show();   
-    PD_AddRollersFrame();
+    if (lootWinner ~= nil) then
+        PulsDkpStartRollBtn:Hide();
+        PulsDkpOffSpecRollBtn:Hide();
+        PulsDkpEndRollBtn:Hide();
+        PD_AddEditLootWinnerFrame();
+    else
+        PulsDkpStartRollBtn:Show();
+        PulsDkpOffSpecRollBtn:Show();
+        PD_AddRollersFrame();
+        PD_HideEditWinnerControls();
+    end
     PD_addRollFrameTitle(item);
     PulseDkpRollFrame:SetScript("OnEvent", PulseDkpRollFrame_OnEvent)
     PulseDkpRollFrame:Show();
@@ -543,7 +566,7 @@ function PD_EndRoll()
         itemObj.itemString = itemString;
         itemObj.name = itemName;
         itemObj.time = time();
-        ns:DistributeLoot(itemObj, rollWinner, currentItem);
+        ns:DistributeLoot(itemObj, rollWinner, currentItem, currentMob);
         SendChatMessage("Roll for " .. currentItem ..
                             " ended. Congratulations to " .. rollWinner .. "!",
                         "RAID_WARNING");
@@ -555,6 +578,7 @@ function PD_EndRoll()
     end
     rollWinner = nil;
     currentItem = nil;
+    currentMob = nil;
     rollers = {};
     PD_UpdateRollersHtml();
     PulsDkpEndRollBtn:Hide();
@@ -609,7 +633,134 @@ function PD_UpdateRollersHtml()
     PulseDkpRollersHtml:SetText(html);
 
 end
+function PD_AddEditLootWinnerFrame()
+    if not PulseDkpEditWinnerFrame then
+        local PulseDkpEditFrameTitle = PulseDkpRollFrame:CreateFontString(
+                                           "PulseDkpEditFrameTitle", "OVERLAY",
+                                           "GameFontNormal");
+        PulseDkpEditFrameTitle:SetFont("Fonts\\FRIZQT__.TTF", 14);
+        PulseDkpEditFrameTitle:SetPoint("TOPLEFT", 10, -30);
+        PulseDkpEditFrameTitle:SetWidth(PulseDkpRollFrame:GetWidth() - 10);
+        PulseDkpEditFrameTitle:SetJustifyH("CENTER");
+        PulseDkpEditFrameTitle:SetWordWrap(false);
 
+        local PulseDkpEditFrameCurrentWinner =
+            PulseDkpRollFrame:CreateFontString("PulseDkpEditFrameCurrentWinner",
+                                               "OVERLAY", "GameFontNormal");
+        PulseDkpEditFrameCurrentWinner:SetFont("Fonts\\FRIZQT__.TTF", 12);
+        PulseDkpEditFrameCurrentWinner:SetPoint("TOPLEFT", 10, -50);
+        PulseDkpEditFrameCurrentWinner:SetWidth(
+            PulseDkpRollFrame:GetWidth() - 10);
+        PulseDkpEditFrameCurrentWinner:SetJustifyH("LEFT");
+        PulseDkpEditFrameCurrentWinner:SetWordWrap(false);
+
+        local PulseDkpEditFrameSelectNewWinner =
+            PulseDkpRollFrame:CreateFontString(
+                "PulseDkpEditFrameSelectNewWinner", "OVERLAY", "GameFontNormal");
+        PulseDkpEditFrameSelectNewWinner:SetFont("Fonts\\FRIZQT__.TTF", 12);
+        PulseDkpEditFrameSelectNewWinner:SetPoint("TOPLEFT", 10, -70);
+        PulseDkpEditFrameSelectNewWinner:SetWidth(
+            PulseDkpRollFrame:GetWidth() - 10);
+        PulseDkpEditFrameSelectNewWinner:SetJustifyH("LEFT");
+        PulseDkpEditFrameSelectNewWinner:SetWordWrap(false);
+        PulseDkpEditFrameSelectNewWinner:SetText("Select new winner:")
+
+        local PulseDkSetNewLootWinner = CreateFrame("Button",
+                                                    "PulseDkSetNewLootWinner",
+                                                    PulseDkpRollFrame,
+                                                    "UIPanelButtonTemplate");
+        PulseDkSetNewLootWinner:SetPoint("TOPLEFT", 280, -90);
+        PulseDkSetNewLootWinner:SetSize(110, 30);
+        PulseDkSetNewLootWinner:SetText("Set new winner");
+        PulseDkSetNewLootWinner:SetEnabled(lootWinner ~= nil);
+        PulseDkSetNewLootWinner:SetScript("OnMouseUp", function(self, button)
+            if not StaticPopupDialogs["CONFIRM_NEW_LOOT_WINNER"] then
+                StaticPopupDialogs["CONFIRM_NEW_LOOT_WINNER"] =
+                    {
+                        text = "Are you sure you want to update the loot winner?",
+                        button1 = "Yes",
+                        button2 = "No",
+                        OnAccept = function()
+                            PD_SetNewLootWinner();
+                        end,
+                        timeout = 0,
+                        whileDead = true,
+                        hideOnEscape = true,
+                        preferredIndex = 3 -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+                    }
+            end
+            StaticPopup_Show("CONFIRM_NEW_LOOT_WINNER");
+        end);
+    end
+
+    PD_AddNewLootWinnerDropDown();
+    if (lootWinner ~= nil) then
+        PulseDkpEditFrameCurrentWinner:SetText("Current winner: " .. lootWinner);
+    end
+
+    PulseDkpEditFrameTitle:SetText("Edit loot winner");
+end
+function PD_HideEditWinnerControls()
+    PulseDkpEditFrameTitle:Hide();
+    PulseDkpEditFrameCurrentWinner:Hide();
+    PulseDkpEditFrameSelectNewWinner:Hide();
+    PulseDkSetNewLootWinner:Hide();
+    PulseDkpNewLootWinnerDropDown:Hide();
+end
+function PD_SetNewLootWinner()
+    if currentRaid == nil then return; end
+
+    for i = 1, #currentRaid.lootWinners do
+        local win = currentRaid.lootWinners[i];
+        if win.mobid == currentMob.id and win.itemLink == currentItem and
+            win.chars == lootWinner then
+            currentRaid.lootWinners[i].chars = newLootWinner;
+        end
+    end
+
+    newLootWinner = nil;
+    lootWinner = nil;
+    PD_AddWinnersToFrame();
+    PD_CloseRollFrame();
+end
+function PD_AddNewLootWinnerDropDown()
+    if currentRaid == nil then return; end
+
+    if not PulseDkpNewLootWinnerDropDown then
+        -- Create the dropdown, and configure its appearance
+        local PulseDkpNewLootWinnerDropDown =
+            CreateFrame("Frame", "PulseDkpNewLootWinnerDropDown",
+                        PulseDkpRollFrame, "UIDropDownMenuTemplate");
+        PulseDkpNewLootWinnerDropDown:SetPoint("TOPLEFT", -7, -90);
+        UIDropDownMenu_SetWidth(PulseDkpNewLootWinnerDropDown, 200);
+        UIDropDownMenu_SetText(PulseDkpNewLootWinnerDropDown, lootWinner)
+    end
+    -- Create and bind the initialization function to the dropdown menu
+    local itemString, itemName = currentItem:match("|H(.*)|h%[(.*)%]|h");
+    for i = 1, #currentRaid.drops do
+        local d = currentRaid.drops[i];
+
+        if d.mob.id == currentMob.id and d.item.item == itemName then
+            UIDropDownMenu_Initialize(PulseDkpNewLootWinnerDropDown,
+                                      function(self, level)
+                for index, value in pairs(d.chars) do
+                    local char = value.name;
+                    local info = UIDropDownMenu_CreateInfo();
+                    info.text, info.arg1 = char, char;
+                    info.checked = char == lootWinner;
+                    info.func = function()
+                        newLootWinner = char;
+                        UIDropDownMenu_SetText(PulseDkpNewLootWinnerDropDown,
+                                               newLootWinner);
+                    end;
+                    UIDropDownMenu_AddButton(info, level);
+                end
+            end);
+            return;
+        end
+    end
+
+end
 -- function PD_registerRollframeDraggable()
 --     -- Movable
 --     PulseDkpRollFrame:SetMovable(true);

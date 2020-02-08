@@ -42,11 +42,10 @@ function ns:Register_LootClick()
 end
 function ns:FancyLootClick(i)
     if ((IsShiftKeyDown() and IsAltKeyDown()) == false) then return end
-    
-    local mob = {name = GetUnitName('target'), id = UnitGUID("target")};    
+
+    local mob = {name = GetUnitName('target'), id = UnitGUID("target")};
     itemLink = GetLootSlotLink(i);
     PD_OpenRollFrame(itemLink, mob)
-    print(itemLink);
 end
 
 local function Addon_OnEvent(self, event, ...)

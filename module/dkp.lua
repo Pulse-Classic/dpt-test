@@ -194,7 +194,7 @@ function ns:AddDrop(mob, item)
         end
     end
 end
-function ns:DistributeLoot(item, winner, itemLink)
+function ns:DistributeLoot(item, winner, itemLink, mob)
     if temp == nil then return; end
 
     if temp.lootWinners == nil then temp.lootWinners = {}; end
@@ -202,7 +202,8 @@ function ns:DistributeLoot(item, winner, itemLink)
     lootWinner.item = item;
     lootWinner.itemLink = itemLink;
     lootWinner.chars = winner;
-
+    lootWinner.mobid = mob.id;
+    lootWinner.mobname = mob.name;
     tinsert(temp.lootWinners, lootWinner);
     Pulse_DKP.raids[temp.index] = temp;
     print('Loot distributed');
