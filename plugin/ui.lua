@@ -408,9 +408,7 @@ function PD_AddWinnersToFrame()
         for i = 1, #currentRaid.lootWinners do
             local d = currentRaid.lootWinners[i];
             local linktext = d.item.name .. '//';
-            local m = currentRaid.drops[i].mob;
-            if (m ~= nil) then linktext = linktext .. m.id; end
-
+            linktext = linktext .. d.mobid;
             h = h .. "<p><a href='" .. linktext .. "'>" .. d.chars .. ' won ' ..
                     d.itemLink .. "</a></p>";
 
@@ -471,13 +469,16 @@ end
 
 function PD_WinnerLinkClicked(...)
     local self, link, text, button = ...;
+
     if (link == nil) then return; end
 
-    local name, mob = link:match("(.*)//(.*)");
+    local name, mobid = link:match("(.*)//(.*)");
     for i = 1, #currentRaid.lootWinners do
         local loot = currentRaid.lootWinners[i];
-        if (loot.mobid == mob and loot.item.name == name) then
-
+        -- print(link);
+        -- print(i .. " mobid check= " .. tostring(loot.mobid == mobid) .. "("..mobid..")")
+        -- print(i .. " lootname chech= " .. tostring(loot.item.name == name).."("..name..")")
+        if (loot.mobid == mobid and loot.item.name == name) then
             PD_OpenRollFrame(loot.itemLink,
                              {id = loot.mobid, name = loot.mobname}, loot.chars);
             break
