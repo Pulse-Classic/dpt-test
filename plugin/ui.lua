@@ -702,11 +702,18 @@ function PD_AddEditLootWinnerFrame()
     PulseDkpEditFrameTitle:SetText("Edit loot winner");
 end
 function PD_HideEditWinnerControls()
-    PulseDkpEditFrameTitle:Hide();
-    PulseDkpEditFrameCurrentWinner:Hide();
-    PulseDkpEditFrameSelectNewWinner:Hide();
-    PulseDkSetNewLootWinner:Hide();
-    PulseDkpNewLootWinnerDropDown:Hide();
+    if PulseDkpEditFrameTitle then PulseDkpEditFrameTitle:Hide(); end
+    if PulseDkpEditFrameCurrentWinner then
+        PulseDkpEditFrameCurrentWinner:Hide();
+    end
+    if PulseDkpEditFrameSelectNewWinner then
+        PulseDkpEditFrameSelectNewWinner:Hide();
+    end
+    if PulseDkSetNewLootWinner then PulseDkSetNewLootWinner:Hide(); end
+    if PulseDkpNewLootWinnerDropDown then
+        PulseDkpNewLootWinnerDropDown:Hide();
+    end
+
 end
 function PD_SetNewLootWinner()
     if currentRaid == nil then return; end
