@@ -479,45 +479,62 @@ function PD_OpenRollFrame(item, mobid)
     if not PulseDkpRollFrame then
         local PulseDkpRollFrame = CreateFrame("Frame", "PulseDkpRollFrame",
                                               UIParent);
+
+        PulseDkpRollFrame:SetSize(400, 600);
+        PulseDkpRollFrame:SetPoint('RIGHT', PulseDkpMainFrame, 400, 0);
+        PulseDkpRollFrame:SetBackdrop({
+            bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+            edgeSize = 16,
+            insets = {left = 0, right = 0, top = 0, bottom = 0}
+        });
+        PulseDkpRollFrame:SetBackdropBorderColor(0, .44, .87, 0.5); -- darkblue
+
+        -- PD_registerRollframeDraggable();
+        PD_registerRollFrameCloseButton();
+
+        local PulsDkpStartRollBtn = CreateFrame("Button", "PulsDkpStartRollBtn",
+                                                PulseDkpRollFrame,
+                                                'UIPanelButtonTemplate');
+        PulsDkpStartRollBtn:SetText("Main spec roll");
+        PulsDkpStartRollBtn:SetSize(100, 30);
+        PulsDkpStartRollBtn:SetPoint('TOPLEFT', 10, -40);
+        PulsDkpStartRollBtn:SetScript("OnMouseUp", function(...)
+            PD_StartRoll('Main spec roll');
+        end);
+
+        local PulsDkpOffSpecRollBtn = CreateFrame("Button",
+                                                  "PulsDkpOffSpecRollBtn",
+                                                  PulseDkpRollFrame,
+                                                  'UIPanelButtonTemplate');
+        PulsDkpOffSpecRollBtn:SetText("Off spec roll");
+        PulsDkpOffSpecRollBtn:SetSize(100, 30);
+        PulsDkpOffSpecRollBtn:SetPoint('TOPLEFT', 110, -40);
+        PulsDkpOffSpecRollBtn:SetScript("OnMouseUp", function(...)
+            PD_StartRoll('Off spec roll');
+        end);
+        local PulsDkpEndRollBtn = CreateFrame("Button", "PulsDkpEndRollBtn",
+                                              PulseDkpRollFrame,
+                                              'UIPanelButtonTemplate');
+        PulsDkpEndRollBtn:SetText("End roll");
+        PulsDkpEndRollBtn:SetSize(60, 30);
+        PulsDkpEndRollBtn:SetPoint('TOPRIGHT', -10, -40);
+        PulsDkpEndRollBtn:SetScript("OnMouseUp", function(...)
+            PD_EndRoll();
+        end);
     end
-    PulseDkpRollFrame:SetSize(400, 600);
-    PulseDkpRollFrame:SetPoint('RIGHT', PulseDkpMainFrame, 400, 0);
-    PulseDkpRollFrame:SetBackdrop({
-        bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-        edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-        edgeSize = 16,
-        insets = {left = 0, right = 0, top = 0, bottom = 0}
-    });
-    PulseDkpRollFrame:SetBackdropBorderColor(0, .44, .87, 0.5); -- darkblue
-
-    -- PD_registerRollframeDraggable();
-    PD_registerRollFrameCloseButton();
-
-    local PulsDkpStartRollBtn = CreateFrame("Button", "PulsDkpStartRollBtn",
-                                            PulseDkpRollFrame,
-                                            'UIPanelButtonTemplate');
-    PulsDkpStartRollBtn:SetText("Start roll");
-    PulsDkpStartRollBtn:SetSize(60, 30);
-    PulsDkpStartRollBtn:SetPoint('TOPLEFT', 10, -40);
-    PulsDkpStartRollBtn:SetScript("OnMouseUp", function(...) PD_StartRoll(); end);
-
-    local PulsDkpEndRollBtn = CreateFrame("Button", "PulsDkpEndRollBtn",
-                                          PulseDkpRollFrame,
-                                          'UIPanelButtonTemplate');
-    PulsDkpEndRollBtn:SetText("End roll");
-    PulsDkpEndRollBtn:SetSize(60, 30);
-    PulsDkpEndRollBtn:SetPoint('TOPRIGHT', -10, -40);
-    PulsDkpEndRollBtn:SetScript("OnMouseUp", function(...) PD_EndRoll(); end);
-
+    PulsDkpStartRollBtn:Show();
+    PulsDkpOffSpecRollBtn:Show();   
     PD_AddRollersFrame();
     PD_addRollFrameTitle(item);
     PulseDkpRollFrame:SetScript("OnEvent", PulseDkpRollFrame_OnEvent)
     PulseDkpRollFrame:Show();
 end
-function PD_StartRoll()
+function PD_StartRoll(specString)
     PulseDkpRollFrame:RegisterEvent('CHAT_MSG_SYSTEM');
+    PulsDkpEndRollBtn:Show();
     rollWinner = nil;
-    SendChatMessage("Rolling for " .. currentItem, "RAID_WARNING");
+    SendChatMessage(specString .. " for " .. currentItem, "RAID_WARNING");
 end
 function PD_EndRoll()
     if rollWinner ~= nil then
@@ -533,12 +550,16 @@ function PD_EndRoll()
         PD_AddWinnersToFrame();
 
     else
-        SendChatMessage("Roll for " .. currentItem .. " ended. No interest.",
+        SendChatMessage("Roll for " .. currentItem .. " ended. No winner.",
                         "RAID_WARNING");
     end
     rollWinner = nil;
     currentItem = nil;
     rollers = {};
+    PD_UpdateRollersHtml();
+    PulsDkpEndRollBtn:Hide();
+    PulsDkpStartRollBtn:Hide();
+    PulsDkpOffSpecRollBtn:Hide();
     PulseDkpRollFrame:UnregisterEvent('CHAT_MSG_SYSTEM');
 end
 function PulseDkpRollFrame_OnEvent(self, event, ...)
@@ -551,7 +572,7 @@ function PulseDkpRollFrame_OnEvent(self, event, ...)
     end
 end
 function PD_UpdateParseRollString(name, unparsedRoll)
-    print(name);
+
     local roll, range = unparsedRoll:match("(.*)%s(.*)");
 
     if (range ~= '(1-100)') then return; end
@@ -565,7 +586,6 @@ function PD_UpdateParseRollString(name, unparsedRoll)
     if (found == true) then return; end
     tinsert(rollers, {name = name, roll = roll, lp = 0});
     table.sort(rollers, PD_SortRolls);
-    print(json.encode(rollers));
     PD_UpdateRollersHtml();
 end
 function PD_SortRolls(a, b)
@@ -574,17 +594,16 @@ function PD_SortRolls(a, b)
 end
 
 function PD_UpdateRollersHtml()
-
-    if (rollers == nil or #rollers == 0) then return; end
-
     local html = '<html><body>';
-    for i = 1, #rollers do
-        local a = '<p><a href="' .. rollers[i].name .. '">';
+    if rollers ~= nil then
+        for i = 1, #rollers do
+            local a = '<p><a href="' .. rollers[i].name .. '">';
 
-        if (rollers[i].name == rollWinner) then a = a .. '>>>'; end
-        a = a .. rollers[i].name .. ' rolled ' .. rollers[i].roll ..
-                ' with a loot priority of (' .. rollers[i].lp .. ')</a></p>';
-        html = html .. a
+            if (rollers[i].name == rollWinner) then a = a .. '>>>'; end
+            a = a .. rollers[i].name .. ' rolled ' .. rollers[i].roll ..
+                    ' with a loot priority of (' .. rollers[i].lp .. ')</a></p>';
+            html = html .. a
+        end
     end
     html = html .. '</body></html>';
     PulseDkpRollersHtml:SetText(html);
