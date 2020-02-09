@@ -58,8 +58,7 @@ function ns:parseMessage(msg)
         end
         index = index + 1;
     end
-    obj.args = arg;
-    print(json.encode(obj));
+    obj.args = arg;    
     return obj;
 end
 function ns:tableToString(tbl)

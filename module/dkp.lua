@@ -89,14 +89,8 @@ SlashCmdList.PULSE_DKP = function(msg)
         ns:PD_OpenMainFrame();
     end
 end
-function ns:PD_OpenMainFrame()
-    -- PD_MainFrame:Show();
-    PD_Frame();
-end
-function ns:PD_CloseMainFrame()
-    -- PD_MainFrame:Hide();
-    PulseDkpMainFrame:Hide();
-end
+function ns:PD_OpenMainFrame() PD_Frame(); end
+function ns:PD_CloseMainFrame() PulseDkpMainFrame:Hide(); end
 function ns:getRaidMembers()
     local temp = {};
     for i = 1, 40 do
@@ -292,7 +286,7 @@ function ns:GenerateItem(itemName)
 
 end
 function ns:UpdateDropFromOther(drop)
-    if drop == nil or temp == nil then return; end
+    if drop == nil or temp == nil or ns:GetCurrentRaid() == nil then return; end
     if temp.drops == nil then temp.drops = {}; end
 
     local mobid, mobname = drop.mobid, drop.mobname;

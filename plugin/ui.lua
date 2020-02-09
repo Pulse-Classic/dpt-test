@@ -381,12 +381,14 @@ function PD_BindCurrentRaidDetails()
         PulseDkpCurrentRaid_TitleFont:SetText(
             "Current raid details for:    " .. currentRaid.name);
     end
-    if (currentRaid.closedOn ~= nil) then
-        PulseDkpCurrentRaid_RaidStatus:Show();
-        PulseDkpCurrentRaid_RaidStatus:SetText(
-            "Raid ended on:  " .. currentRaid.closedOn .. " UTC");
-    else
-        PulseDkpCurrentRaid_RaidStatus:Hide();
+    if (PulseDkpCurrentRaid_RaidStatus) then
+        if (currentRaid.closedOn ~= nil) then
+            PulseDkpCurrentRaid_RaidStatus:Show();
+            PulseDkpCurrentRaid_RaidStatus:SetText(
+                "Raid ended on:  " .. currentRaid.closedOn .. " UTC");
+        else
+            PulseDkpCurrentRaid_RaidStatus:Hide();
+        end
     end
 
     if (currentRaid.date ~= nil) then
