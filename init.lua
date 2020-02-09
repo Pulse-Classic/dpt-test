@@ -67,10 +67,18 @@ local function Addon_OnEvent(self, event, ...)
     elseif (event == 'LOOT_READY') then
         ns:dkpLootOpen();
         ns:Register_LootClick();
+    elseif (event == 'ADDON_LOADED') then
+        local addOnName = ...;
+        if addOnName == 'Pulse_Dkp' then
+            if ns:GetLastUnfinishedRaid() ~= nil then
+                ns:SetCurrentRaid(ns:GetLastUnfinishedRaid());
+            end
+        end
     end
 end
 
 frame:SetScript("OnEvent", Addon_OnEvent)
 frame:RegisterEvent("CHAT_MSG_ADDON");
 frame:RegisterEvent('PLAYER_LOGIN');
+frame:RegisterEvent('ADDON_LOADED');
 -- frame:RegisterEvent('GROUP_ROSTER_UPDATE');

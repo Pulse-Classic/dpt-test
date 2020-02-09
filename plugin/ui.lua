@@ -33,6 +33,7 @@ function PD_Frame()
     end
 
     PD_BindCurrentRaidDetails();
+    if currentRaid ~= nil then PD_LoadLastClicked(); end
     PulseDkpMainFrame:Show();
 
 end
@@ -148,19 +149,8 @@ function PD_addNewRaidFrame()
     PD_LoadBtn:SetSize(75, 30);
     PD_LoadBtn:SetText("Load last");
     PD_LoadBtn:SetEnabled(ns:GetLastUnfinishedRaid() ~= nil);
-    PD_LoadBtn:SetScript("OnMouseUp", function(self, button)
-        currentRaid = ns:GetLastUnfinishedRaid();
-        if (currentRaid == nil) then return; end
-        ns:SetCurrentRaid(currentRaid);
-        PD_BindCurrentRaidDetails();
-        PulseDkpNewRaidFrame:Hide();
-        if (currentRaid.startedOn ~= nil) then
-            PulseDkpStartRaidButton:Hide();
-            PulseDkpEndRaidButton:Show();
-            ns:RegisterLootReady();
-        end
-        PulseDkpCurrentRaidFrame:Show();
-    end);
+    PD_LoadBtn:SetScript("OnMouseUp",
+                         function(self, button) PD_LoadLastClicked(); end);
     PD_addNewRaidDropDown();
 
 end
@@ -370,7 +360,19 @@ function PD_addCurrentRaidFrame()
     rf:SetScrollChild(rb)
     PD_CurrentRaid:Hide();
 end
-
+function PD_LoadLastClicked()
+    currentRaid = ns:GetLastUnfinishedRaid();
+    if (currentRaid == nil) then return; end
+    ns:SetCurrentRaid(currentRaid);
+    PD_BindCurrentRaidDetails();
+    PulseDkpNewRaidFrame:Hide();
+    if (currentRaid.startedOn ~= nil) then
+        PulseDkpStartRaidButton:Hide();
+        PulseDkpEndRaidButton:Show();
+        ns:RegisterLootReady();
+    end
+    PulseDkpCurrentRaidFrame:Show();
+end
 function PD_BindCurrentRaidDetails()
     currentRaid = ns:GetCurrentRaid();
 
