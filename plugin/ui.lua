@@ -429,7 +429,7 @@ function PD_addDropsToFrame()
             local d = currentRaid.drops[i];
             local linktext = d.item.item .. '//';
             local m = currentRaid.drops[i].mob;
-            if (m ~= nil) then linktext = linktext .. m.id; end
+            if (m ~= nil and m.id~= nil) then linktext = linktext .. m.id; end
 
             h = h .. "<p><a href='" .. linktext .. "'>" .. d.item.item ..
                     "</a></p>";
