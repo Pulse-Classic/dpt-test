@@ -477,16 +477,12 @@ function PD_WinnerLinkClicked(...)
     local name, mobid = link:match("(.*)//(.*)");
     for i = 1, #currentRaid.lootWinners do
         local loot = currentRaid.lootWinners[i];
-        -- print(link);
-        -- print(i .. " mobid check= " .. tostring(loot.mobid == mobid) .. "("..mobid..")")
-        -- print(i .. " lootname chech= " .. tostring(loot.item.name == name).."("..name..")")
         if (loot.mobid == mobid and loot.item.name == name) then
             PD_OpenRollFrame(loot.itemLink,
                              {id = loot.mobid, name = loot.mobname}, loot.chars);
             break
         end
     end
-    -- PD_OpenRollFrame(name, {id = mob, name = ''}, true);
 end
 
 function PD_OpenRollFrame(item, mob, winner)
@@ -735,7 +731,6 @@ function PD_SetNewLootWinner()
 end
 function PD_AddNewLootWinnerDropDown()
     if currentRaid == nil then return; end
-
     if not PulseDkpNewLootWinnerDropDown then
         -- Create the dropdown, and configure its appearance
         local PulseDkpNewLootWinnerDropDown =
@@ -743,13 +738,13 @@ function PD_AddNewLootWinnerDropDown()
                         PulseDkpRollFrame, "UIDropDownMenuTemplate");
         PulseDkpNewLootWinnerDropDown:SetPoint("TOPLEFT", -7, -90);
         UIDropDownMenu_SetWidth(PulseDkpNewLootWinnerDropDown, 200);
-        UIDropDownMenu_SetText(PulseDkpNewLootWinnerDropDown, lootWinner)
+        UIDropDownMenu_SetText(PulseDkpNewLootWinnerDropDown, lootWinner);
     end
     -- Create and bind the initialization function to the dropdown menu
     local itemString, itemName = currentItem:match("|H(.*)|h%[(.*)%]|h");
+    if currentRaid.drops == nil or #currentRaid.drops < 1 then return; end
     for i = 1, #currentRaid.drops do
         local d = currentRaid.drops[i];
-
         if d.mob.id == currentMob.id and d.item.item == itemName then
             UIDropDownMenu_Initialize(PulseDkpNewLootWinnerDropDown,
                                       function(self, level)
@@ -769,7 +764,7 @@ function PD_AddNewLootWinnerDropDown()
             return;
         end
     end
-
+    PulseDkpNewLootWinnerDropDown:Show();
 end
 -- function PD_registerRollframeDraggable()
 --     -- Movable
