@@ -53,7 +53,8 @@ SlashCmdList.PULSE_DKP = function(msg)
 
     elseif cmd == 'create' then
         ns:CreateRaid(msg, args);
-
+    elseif cmd == 'ps' then
+        PD_AddLPImportFrame();        
     elseif cmd == 'start' then
         ns:StartRaid();
 
@@ -311,6 +312,20 @@ function ns:UpdateDropFromOther(drop)
     local d = {mob = {name = mobname, id = mobid}, item = item};
     tinsert(temp.drops, d);
     PD_BindCurrentRaidDetails();
+end
+function ns:ParseLPStandings(lpString)
+
+    if not lpString then return end
+
+    local workString = lpString:gsub("{", "");
+    workString = workString:gsub("}", "");
+    local parsedLp = {};
+    for token in string.gmatch(workString, "[^%,]+") do
+        token = token:gsub('"', "");
+        local prop, value = string.match(token, "(.*):(.*)");
+        parsedLp[prop] = tonumber(value);
+    end
+    Pulse_DKP.LP = parsedLp;
 end
 SLASH_PULSE_DKP1 = "/pd";
 
