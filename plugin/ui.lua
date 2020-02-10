@@ -23,7 +23,7 @@ function PD_Frame()
             insets = {left = 0, right = 0, top = 0, bottom = 0}
         });
         PulseDkpMainFrame:SetBackdropBorderColor(0, .44, .87, 0.5); -- darkblue
-
+        tinsert(UISpecialFrames, PulseDkpMainFrame:GetName());
         PD_registerDraggable();
         -- PD_registerResizeable();
         PD_registerCloseButton();
@@ -92,10 +92,11 @@ function PD_registerCloseButton()
     PD_CloseBtn:SetSize(20, 20);
     PD_CloseBtn:SetText("X");
 
-    PD_CloseBtn:SetScript("OnMouseUp", function(self, button)
-        PulseDkpMainFrame:Hide();
-        PD_CloseRollFrame();
-    end);
+    PD_CloseBtn:SetScript("OnMouseUp", function(self, button) PD_Close(); end);
+end
+function PD_Close()
+    PulseDkpMainFrame:Hide();
+    PD_CloseRollFrame();
 end
 function PD_addTitleFrame()
     local PD_T = CreateFrame("Frame", "PulseDkpTitleFrame", PulseDkpMainFrame);
@@ -708,7 +709,7 @@ function PD_AddEditLootWinnerFrame()
     if (lootWinner ~= nil) then
         PulseDkpEditFrameCurrentWinner:SetText("Current winner: " .. lootWinner);
     end
-
+    PulseDkpRollFrame:Hide();
     PulseDkpEditFrameTitle:SetText("Edit loot winner");
 end
 function PD_HideEditWinnerControls()
