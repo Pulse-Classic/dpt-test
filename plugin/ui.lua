@@ -429,7 +429,9 @@ function PD_addDropsToFrame()
             local d = currentRaid.drops[i];
             local linktext = d.item.item .. '//';
             local m = currentRaid.drops[i].mob;
-            if (m ~= nil and m.id~= nil) then linktext = linktext .. m.id; end
+            if (m ~= nil and m.id ~= nil) then
+                linktext = linktext .. m.id;
+            end
 
             h = h .. "<p><a href='" .. linktext .. "'>" .. d.item.item ..
                     "</a></p>";
@@ -506,7 +508,7 @@ function PD_OpenRollFrame(item, mob, winner)
         });
         PulseDkpRollFrame:SetBackdropBorderColor(0, .44, .87, 0.5); -- darkblue
 
-        -- PD_registerRollframeDraggable();
+        PD_registerRollframeDraggable();
         PD_registerRollFrameCloseButton();
 
         local PulsDkpStartRollBtn = CreateFrame("Button", "PulsDkpStartRollBtn",
@@ -550,15 +552,23 @@ function PD_OpenRollFrame(item, mob, winner)
         PD_AddRollersFrame();
         PD_HideEditWinnerControls();
     end
+
     PD_addRollFrameTitle(item);
     PulseDkpRollFrame:SetScript("OnEvent", PulseDkpRollFrame_OnEvent)
     PulseDkpRollFrame:Show();
+    PD_SetRollerFramePoint();
 end
 function PD_StartRoll(specString)
     PulseDkpRollFrame:RegisterEvent('CHAT_MSG_SYSTEM');
     PulsDkpEndRollBtn:Show();
     rollWinner = nil;
     SendChatMessage(specString .. " for " .. currentItem, "RAID_WARNING");
+end
+function PD_SetRollerFramePoint()
+    if PulseDkpRollFrame and PulseDkpMainFrame:IsVisible() then
+        PulseDkpRollFrame:ClearAllPoints();
+        PulseDkpRollFrame:SetPoint('RIGHT', PulseDkpMainFrame, 400, 0);
+    end
 end
 function PD_EndRoll()
     if rollWinner ~= nil then
@@ -768,16 +778,16 @@ function PD_AddNewLootWinnerDropDown()
     end
     PulseDkpNewLootWinnerDropDown:Show();
 end
--- function PD_registerRollframeDraggable()
---     -- Movable
---     PulseDkpRollFrame:SetMovable(true);
---     PulseDkpRollFrame:SetClampedToScreen(true);
---     PulseDkpRollFrame:SetScript("OnMouseDown", function(self, button)
---         if button == "LeftButton" then self:StartMoving() end
---     end);
---     PulseDkpRollFrame:SetScript("OnMouseUp",
---                                 PulseDkpRollFrame.StopMovingOrSizing);
--- end
+function PD_registerRollframeDraggable()
+    -- Movable
+    PulseDkpRollFrame:SetMovable(true);
+    PulseDkpRollFrame:SetClampedToScreen(true);
+    PulseDkpRollFrame:SetScript("OnMouseDown", function(self, button)
+        if button == "LeftButton" then self:StartMoving() end
+    end);
+    PulseDkpRollFrame:SetScript("OnMouseUp",
+                                PulseDkpRollFrame.StopMovingOrSizing);
+end
 function PD_AddRollersFrame()
     local ech = PulseDkpRollFrame:CreateFontString(
                     "PulseDkpRollersConsoleHeader", "OVERLAY", "GameFontNormal");
