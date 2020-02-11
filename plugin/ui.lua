@@ -707,6 +707,32 @@ function PD_AddEditLootWinnerFrame()
             end
             StaticPopup_Show("CONFIRM_NEW_LOOT_WINNER");
         end);
+
+        local PulseDkDeleteWinner = CreateFrame("Button", "PulseDkDeleteWinner",
+                                                PulseDkpRollFrame,
+                                                "UIPanelButtonTemplate");
+        PulseDkDeleteWinner:SetPoint("TOPLEFT", 280, -120);
+        PulseDkDeleteWinner:SetSize(110, 30);
+        PulseDkDeleteWinner:SetText("Delete winner");
+        PulseDkDeleteWinner:SetEnabled(lootWinner ~= nil);
+        PulseDkDeleteWinner:SetScript("OnMouseUp", function(self, button)
+            if not StaticPopupDialogs["CONFIRM_DELETE_WINNER"] then
+                StaticPopupDialogs["CONFIRM_DELETE_WINNER"] =
+                    {
+                        text = "Are you sure you want to delete the loot winner?",
+                        button1 = "Yes",
+                        button2 = "No",
+                        OnAccept = function()
+                            PD_DeleteWinner();
+                        end,
+                        timeout = 0,
+                        whileDead = true,
+                        hideOnEscape = true,
+                        preferredIndex = 3 -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+                    }
+            end
+            StaticPopup_Show("CONFIRM_DELETE_WINNER");
+        end);
     end
 
     PD_AddNewLootWinnerDropDown();
@@ -716,6 +742,24 @@ function PD_AddEditLootWinnerFrame()
     PulseDkpRollFrame:Hide();
     PulseDkpEditFrameTitle:SetText("Edit loot winner");
 end
+
+function PD_DeleteWinner()
+    if currentRaid == nil then return; end
+
+    for i = 1, #currentRaid.lootWinners do
+        local win = currentRaid.lootWinners[i];
+        if win.mobid == currentMob.id and win.itemLink == currentItem and
+            win.chars == lootWinner then
+            currentRaid.lootWinners[i] = nil;
+        end
+    end
+
+    newLootWinner = nil;
+    lootWinner = nil;
+    PD_AddWinnersToFrame();
+    PD_CloseRollFrame();
+end
+
 function PD_HideEditWinnerControls()
     if PulseDkpEditFrameTitle then PulseDkpEditFrameTitle:Hide(); end
     if PulseDkpEditFrameCurrentWinner then
@@ -728,7 +772,7 @@ function PD_HideEditWinnerControls()
     if PulseDkpNewLootWinnerDropDown then
         PulseDkpNewLootWinnerDropDown:Hide();
     end
-
+    if PulseDkDeleteWinner then PulseDkDeleteWinner:Hide(); end
 end
 function PD_SetNewLootWinner()
     if currentRaid == nil then return; end
