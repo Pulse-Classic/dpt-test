@@ -1,5 +1,4 @@
 local _, ns = ...;
-local selectedRaid;
 local json = _G["json"];
 local raiders;
 
@@ -83,78 +82,6 @@ function PD_addTitleFrame()
     eb:SetWordWrap(false);
     eb:SetText("Pulse Dkp assistant");
 
-end
-function PD_addNewRaidFrame()
-    local PD_NewRaid = CreateFrame("Frame", "PulseDkpNewRaidFrame",
-                                   PulseDkpMainFrame);
-    PD_NewRaid:SetSize(PulseDkpMainFrame:GetWidth(), 200);
-    PD_NewRaid:SetPoint("TOPLEFT", 0, -40);
-
-    local fs = PD_NewRaid:CreateFontString("PulseDkpNewRaid_TitleFont",
-                                           "OVERLAY", "GameFontNormal");
-    fs:SetFont("Fonts\\FRIZQT__.TTF", 12);
-    fs:SetPoint("TOPLEFT", 10, -10);
-    fs:SetWidth(200);
-    fs:SetJustifyH("LEFT");
-    fs:SetWordWrap(false);
-    fs:SetText("Create a new raid:");
-
-    local PD_NewRaidBtn = CreateFrame("Button", "PulseDkpNewButton",
-                                      PulseDkpNewRaidFrame,
-                                      "UIPanelButtonTemplate");
-    PD_NewRaidBtn:SetPoint("TOPLEFT", 260, -30);
-    PD_NewRaidBtn:SetSize(60, 30);
-    PD_NewRaidBtn:SetText("Create");
-    PD_NewRaidBtn:SetEnabled(false);
-    PD_NewRaidBtn:SetScript("OnMouseUp", function(self, button)
-        if (selectedRaid == nil) then return; end
-        ns:CreateRaid(selectedRaid);
-        PD_BindCurrentRaidDetails();
-        PulseDkpNewRaidFrame:Hide();
-        PulseDkpCurrentRaidFrame:Show();
-    end);
-
-    local PD_LoadBtn = CreateFrame("Button", "PulseDkpLoadLastButton",
-                                   PulseDkpNewRaidFrame, "UIPanelButtonTemplate");
-    PD_LoadBtn:SetPoint("TOPLEFT", 260, -70);
-    PD_LoadBtn:SetSize(75, 30);
-    PD_LoadBtn:SetText("Load last");
-    PD_LoadBtn:SetEnabled(ns:GetLastUnfinishedRaid() ~= nil);
-    PD_LoadBtn:SetScript("OnMouseUp",
-                         function(self, button) PD_LoadLastClicked(); end);
-    PD_addNewRaidDropDown();
-
-end
-
-function PD_addNewRaidDropDown()
-    if PulseDkpNewRaidDropDown then return; end
-    -- Create the dropdown, and configure its appearance
-    local dropdown = CreateFrame("Frame", "PulseDkpNewRaidDropDown",
-                                 PulseDkpNewRaidFrame, "UIDropDownMenuTemplate");
-    dropdown:SetPoint("TOPLEFT", 0, -30);
-    UIDropDownMenu_SetWidth(dropdown, 200);
-    UIDropDownMenu_SetText(dropdown, "Select a raid..")
-
-    -- Create and bind the initialization function to the dropdown menu
-    UIDropDownMenu_Initialize(dropdown, function(self, level)
-        for i = 1, #Pulse_DKP.availableRaids do
-            local raid = Pulse_DKP.availableRaids[i];
-            if raid ~= nil and raid.enabled == true then
-                local info = UIDropDownMenu_CreateInfo();
-                info.text, info.arg1 = raid.name, raid.name;
-                info.checked = false;
-                if selectedRaid ~= nil and selectedRaid == raid.name then
-                    info.checked = true;
-                end
-                info.func = function()
-                    selectedRaid = raid.name;
-                    UIDropDownMenu_SetText(dropdown, selectedRaid)
-                    PulseDkpNewButton:SetEnabled(true);
-                end;
-                UIDropDownMenu_AddButton(info, level);
-            end
-        end
-    end);
 end
 
 function PD_addCurrentRaidFrame()
@@ -460,60 +387,3 @@ function PD_WinnerLinkClicked(...)
     end
 end
 
-function PD_AddLPImportFrame()
-    if not PulseDkpLPImportFrame then
-        local PulseDkpLPImportFrame = CreateFrame("Frame",
-                                                  "PulseDkpLPImportFrame",
-                                                  UIParent);
-        PulseDkpLPImportFrame:SetPoint("CENTER");
-        PulseDkpLPImportFrame:SetSize(600, 400);
-
-        PulseDkpLPImportFrame:SetBackdrop(
-            {
-                bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
-                edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-                edgeSize = 16,
-                insets = {left = 0, right = 0, top = 0, bottom = 0}
-            });
-        PulseDkpLPImportFrame:SetBackdropBorderColor(0, .44, .87, 0.5); -- darkblue
-        tinsert(UISpecialFrames, PulseDkpLPImportFrame:GetName());
-
-        local title = PulseDkpLPImportFrame:CreateFontString("PD_RollTitleFont",
-                                                             "OVERLAY",
-                                                             "GameFontNormal");
-        title:SetFont("Fonts\\FRIZQT__.TTF", 14);
-        title:SetPoint("TOPLEFT", 10, -10);
-        title:SetWidth(PulseDkpLPImportFrame:GetWidth());
-        title:SetJustifyH("LEFT");
-        title:SetWordWrap(false);
-        title:SetText("Paste LP Json below:");
-    end
-
-    local sf = CreateFrame("ScrollFrame", "PulseDkpLPImportFrameScrollFrame",
-                           PulseDkpLPImportFrame, "UIPanelScrollFrameTemplate")
-    sf:SetPoint("TOPLEFT", 10, -30);
-    sf:SetSize(560, 335);
-    -- EditBox
-    local eb = CreateFrame("EditBox", "PulseDkpLPImportFrameScrollFrameEditBox",
-                           PulseDkpLPImportFrameScrollFrame)
-    eb:SetSize(sf:GetSize())
-    eb:SetMultiLine(true);
-    eb:SetAutoFocus(true);
-    eb:SetFontObject("ChatFontNormal")
-    eb:SetScript("OnEscapePressed", function() PulseDkpLPImportFrame:Hide() end)
-    sf:SetScrollChild(eb)
-
-    local PulseDkpImportBtn = CreateFrame("Button", "PulseDkpImportBtn",
-                                          PulseDkpLPImportFrame,
-                                          "UIPanelButtonTemplate");
-    PulseDkpImportBtn:SetPoint("BOTTOMRIGHT", -5, 5);
-    PulseDkpImportBtn:SetSize(75, 30);
-    PulseDkpImportBtn:SetText("Import");
-    PulseDkpImportBtn:SetScript("OnMouseUp", function()
-        ns:ParseLPStandings(PulseDkpLPImportFrameScrollFrameEditBox:GetText());
-        PulseDkpLPImportFrame:Hide();
-    end);
-
-    PulseDkpLPImportFrame:Show();
-
-end

@@ -12,6 +12,8 @@ ui\ui.lua
 ui\ui.xml
 ui\roll.lua
 ui\edit.lua
+ui\import.lua
+ui\new.lua
 init.lua
 module\dkp.lua
 module\storage_test.lua

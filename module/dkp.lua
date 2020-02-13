@@ -27,7 +27,7 @@ SlashCmdList.PULSE_DKP = function(msg)
     elseif cmd == 'create' then
         ns:CreateRaid(msg, args);
     elseif cmd == 'ps' then
-        PD_AddLPImportFrame();
+        ns:AddLPImportFrame();
     elseif cmd == 'start' then
         ns:StartRaid();
 
@@ -181,7 +181,6 @@ function ns:DistributeLoot(item, winner, itemLink, mob)
     lootWinner.mobname = mob.name;
     tinsert(Pulse_DKP.currentRaid.lootWinners, lootWinner);
     Pulse_DKP.raids[Pulse_DKP.currentRaid.index] = Pulse_DKP.currentRaid;
-    print('Loot distributed');
 
 end
 function ns:EndRaid(msg)
@@ -236,7 +235,7 @@ function ns:dkpLootOpen()
     local info = GetLootInfo();
     local mob = {name = GetUnitName('target'), id = mobId};
     if (info ~= nil) then
-        for i = 1, #info do            
+        for i = 1, #info do
             local t = info[i];
             ns:AddDrop(mob, t);
         end
@@ -266,8 +265,12 @@ function ns:GenerateItem(itemName)
 
 end
 function ns:UpdateDropFromOther(drop)
-    if drop == nil or Pulse_DKP.currentRaid == nil or ns:GetCurrentRaid() == nil then return; end
-    if Pulse_DKP.currentRaid.drops == nil then Pulse_DKP.currentRaid.drops = {}; end
+    if drop == nil or Pulse_DKP.currentRaid == nil or ns:GetCurrentRaid() == nil then
+        return;
+    end
+    if Pulse_DKP.currentRaid.drops == nil then
+        Pulse_DKP.currentRaid.drops = {};
+    end
 
     local mobid, mobname = drop.mobid, drop.mobname;
     local dropIndex;
