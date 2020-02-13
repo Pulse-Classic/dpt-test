@@ -87,8 +87,8 @@ function ns:EndRoll()
         ns:DistributeLoot(itemObj, Pulse_DKP.rollWinner, Pulse_DKP.currentItem,
                           Pulse_DKP.currentMob);
         SendChatMessage("Roll for " .. Pulse_DKP.currentItem ..
-                            " ended. Congratulations to " .. Pulse_DKP.rollWinner .. "!",
-                        "RAID_WARNING");
+                            " ended. Congratulations to " ..
+                            Pulse_DKP.rollWinner .. "!", "RAID_WARNING");
         PD_AddWinnersToFrame();
 
     else
@@ -144,7 +144,9 @@ function ns:UpdateRollersHtml()
         for i = 1, #rollers do
             local a = '<p><a href="' .. rollers[i].name .. '">';
 
-            if (rollers[i].name == Pulse_DKP.rollWinner) then a = a .. '>>>'; end
+            if (rollers[i].name == Pulse_DKP.rollWinner) then
+                a = a .. '>>>';
+            end
             a = a .. rollers[i].name .. ' rolled ' .. rollers[i].roll ..
                     ' with a loot priority of (' .. rollers[i].lp .. ')</a></p>';
             html = html .. a
@@ -201,11 +203,12 @@ function ns:RegisterRollFrameCloseButton()
     PD_CloseBtn:SetSize(20, 20);
     PD_CloseBtn:SetText("X");
 
-    PD_CloseBtn:SetScript("OnMouseUp", function(self, button)
-        if (PulseDkpRollFrame) then PulseDkpRollFrame:Hide(); end
-    end);
+    PD_CloseBtn:SetScript("OnMouseUp",
+                          function(self, button) ns:CloseRollFrame(); end);
 end
-
+function ns:CloseRollFrame()
+    if (PulseDkpRollFrame) then PulseDkpRollFrame:Hide(); end
+end
 function ns:AddRollFrameTitle(item)
     if (not PulseDkpRollTitleFrame) then
         local PD_T = CreateFrame("Frame", "PulseDkpRollTitleFrame",

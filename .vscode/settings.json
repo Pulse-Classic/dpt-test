@@ -58,6 +58,12 @@
         "PulsDkpOffSpecRollBtn",
         "PulseDkpRollersHtml",
         "PulseDkpRollTitleFrame",
-        "PD_RollTitleFont"
+        "PD_RollTitleFont",
+        "PulseDkpLPImportFrame",
+        "PulseDkpLPImportFrameScrollFrame",
+        "PulseDkpLPImportFrameScrollFrameEditBox",
+        "PulseDkpDropsHtml",
+        "PulseDkpWinnersHtml",
+        "PulseDkpLoadLastButton"
     ]
 }

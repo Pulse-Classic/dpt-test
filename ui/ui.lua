@@ -1,6 +1,5 @@
 local _, ns = ...;
 local selectedRaid;
-local currentRaid;
 local json = _G["json"];
 local raiders;
 
@@ -28,7 +27,7 @@ function PD_Frame()
     end
 
     PD_BindCurrentRaidDetails();
-    if currentRaid ~= nil then PD_LoadLastClicked(); end
+    if Pulse_DKP.currentRaid ~= nil then PD_LoadLastClicked(); end
     PulseDkpMainFrame:Show();
 
 end
@@ -56,30 +55,7 @@ function PD_MinimapClick()
         PD_Frame();
     end
 end
--- function PD_registerResizeable()
---    PulseDkpMainFrame:SetResizable(true)
---     PulseDkpMainFrame:SetMinResize(400, 300)
 
---     local rb = CreateFrame("Button", "PulseDkpResizeButton", PulseDkpMainFrame);
---     rb:SetPoint("BOTTOMRIGHT", -4, 4);
---     rb:SetSize(16, 16);
-
---     rb:SetNormalTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Up");
---     rb:SetHighlightTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Highlight");
---     rb:SetPushedTexture("Interface\\ChatFrame\\UI-ChatIM-SizeGrabber-Down");
-
---     rb:SetScript("OnMouseDown", function(self, button)
---         if button == "LeftButton" then
---             PulseDkpMainFrame:StartSizing("BOTTOMRIGHT");
---             self:GetHighlightTexture():Hide();            
---         end
---     end);
---     rb:SetScript("OnMouseUp", function(self, button)
---         PulseDkpMainFrame:StopMovingOrSizing();
---         self:GetHighlightTexture():Show();
---         PD_TitleFont:SetWidth(PulseDkpMainFrame:GetWidth());
---     end);
--- end
 function PD_registerCloseButton()
     local PD_CloseBtn = CreateFrame("Button", "PulseDkpCloseButton",
                                     PulseDkpMainFrame, "UIPanelButtonTemplate");
@@ -91,7 +67,7 @@ function PD_registerCloseButton()
 end
 function PD_Close()
     PulseDkpMainFrame:Hide();
-    PD_CloseRollFrame();
+    ns:CloseRollFrame();
 end
 function PD_addTitleFrame()
     local PD_T = CreateFrame("Frame", "PulseDkpTitleFrame", PulseDkpMainFrame);
@@ -132,8 +108,7 @@ function PD_addNewRaidFrame()
     PD_NewRaidBtn:SetEnabled(false);
     PD_NewRaidBtn:SetScript("OnMouseUp", function(self, button)
         if (selectedRaid == nil) then return; end
-        ns:CreateRaid(selectedRaid)
-        currentRaid = ns:GetCurrentRaid();
+        ns:CreateRaid(selectedRaid);
         PD_BindCurrentRaidDetails();
         PulseDkpNewRaidFrame:Hide();
         PulseDkpCurrentRaidFrame:Show();
@@ -266,7 +241,7 @@ function PD_addCurrentRaidFrame()
     PD_RaidDoneButton:SetText("Done");
     PD_RaidDoneButton:Hide();
     PD_RaidDoneButton:SetScript("OnMouseUp", function(self, button)
-        currentRaid = nil;
+        Pulse_DKP.currentRaid = nil;
         selectedRaid = nil;
         PulseDkpLoadLastButton:SetEnabled(ns:GetLastUnfinishedRaid() ~= nil);
         PulseDkpNewButton:SetEnabled(false);
@@ -357,12 +332,12 @@ function PD_addCurrentRaidFrame()
     PD_CurrentRaid:Hide();
 end
 function PD_LoadLastClicked()
-    currentRaid = ns:GetLastUnfinishedRaid();
-    if (currentRaid == nil) then return; end
-    ns:SetCurrentRaid(currentRaid);
+    Pulse_DKP.currentRaid = ns:GetLastUnfinishedRaid();
+    if (Pulse_DKP.currentRaid == nil) then return; end
+    ns:SetCurrentRaid(Pulse_DKP.currentRaid);
     PD_BindCurrentRaidDetails();
     PulseDkpNewRaidFrame:Hide();
-    if (currentRaid.startedOn ~= nil) then
+    if (Pulse_DKP.currentRaid.startedOn ~= nil) then
         PulseDkpStartRaidButton:Hide();
         PulseDkpEndRaidButton:Show();
         ns:RegisterLootReady();
@@ -370,30 +345,29 @@ function PD_LoadLastClicked()
     PulseDkpCurrentRaidFrame:Show();
 end
 function PD_BindCurrentRaidDetails()
-    currentRaid = ns:GetCurrentRaid();
-
-    if currentRaid == nil then return; end
-    if currentRaid.name ~= nil then
+    if Pulse_DKP.currentRaid == nil then return; end
+    if Pulse_DKP.currentRaid.name ~= nil then
         PulseDkpCurrentRaid_TitleFont:SetText(
-            "Current raid details for:    " .. currentRaid.name);
+            "Current raid details for:    " .. Pulse_DKP.currentRaid.name);
     end
     if (PulseDkpCurrentRaid_RaidStatus) then
-        if (currentRaid.closedOn ~= nil) then
+        if (Pulse_DKP.currentRaid.closedOn ~= nil) then
             PulseDkpCurrentRaid_RaidStatus:Show();
             PulseDkpCurrentRaid_RaidStatus:SetText(
-                "Raid ended on:  " .. currentRaid.closedOn .. " UTC");
+                "Raid ended on:  " .. Pulse_DKP.currentRaid.closedOn .. " UTC");
         else
             PulseDkpCurrentRaid_RaidStatus:Hide();
         end
     end
 
-    if (currentRaid.date ~= nil) then
+    if (Pulse_DKP.currentRaid.date ~= nil) then
         PulseDkpCurrentRaid_RaidDate:SetText(
-            "Raid date:        " .. currentRaid.date);
+            "Raid date:        " .. Pulse_DKP.currentRaid.date);
     end
-    if (currentRaid.startedOn ~= nil) then
+    if (Pulse_DKP.currentRaid.startedOn ~= nil) then
         PulseDkpCurrentRaid_RaidStart:SetText(
-            "Raid started on:        " .. currentRaid.startedOn .. " UTC");
+            "Raid started on:        " .. Pulse_DKP.currentRaid.startedOn ..
+                " UTC");
     else
         PulseDkpCurrentRaid_RaidStart:SetText(
             "Raid haven't started yet - good luck!");
@@ -420,11 +394,11 @@ function PD_AddWinnersToFrame()
 end
 function PD_addDropsToFrame()
     local h = '<html><body>';
-    if currentRaid ~= nil and currentRaid.drops ~= nil then
-        for i = 1, #currentRaid.drops do
-            local d = currentRaid.drops[i];
+    if Pulse_DKP.currentRaid ~= nil and Pulse_DKP.currentRaid.drops ~= nil then
+        for i = 1, #Pulse_DKP.currentRaid.drops do
+            local d = Pulse_DKP.currentRaid.drops[i];
             local linktext = d.item.item .. '//';
-            local m = currentRaid.drops[i].mob;
+            local m = Pulse_DKP.currentRaid.drops[i].mob;
             if (m ~= nil and m.id ~= nil) then
                 linktext = linktext .. m.id;
             end
@@ -443,17 +417,18 @@ function PD_addRaidersToFrame()
 
     local added = {};
     local h = '';
-    if currentRaid ~= nil and currentRaid.startingChars ~= nil then
-        for i = 1, #currentRaid.startingChars do
-            local d = currentRaid.startingChars[i];
+    if Pulse_DKP.currentRaid ~= nil and Pulse_DKP.currentRaid.startingChars ~=
+        nil then
+        for i = 1, #Pulse_DKP.currentRaid.startingChars do
+            local d = Pulse_DKP.currentRaid.startingChars[i];
             added[d.name] = true;
             h = h .. i .. ': ' .. d.name .. ' (present from the start)\n';
         end
     end
 
-    if currentRaid ~= nil and currentRaid.drops ~= nil then
-        for i = 1, #currentRaid.drops do
-            local drop = currentRaid.drops[i];
+    if Pulse_DKP.currentRaid ~= nil and Pulse_DKP.currentRaid.drops ~= nil then
+        for i = 1, #Pulse_DKP.currentRaid.drops do
+            local drop = Pulse_DKP.currentRaid.drops[i];
             if drop ~= nil and drop.chars ~= nil then
                 for x = 1, #drop.chars do
                     local char = drop.chars[x];
@@ -475,8 +450,8 @@ function PD_WinnerLinkClicked(...)
     if (link == nil) then return; end
 
     local name, mobid = link:match("(.*)//(.*)");
-    for i = 1, #currentRaid.lootWinners do
-        local loot = currentRaid.lootWinners[i];
+    for i = 1, #Pulse_DKP.currentRaid.lootWinners do
+        local loot = Pulse_DKP.currentRaid.lootWinners[i];
         if (loot.mobid == mobid and loot.item.name == name) then
             ns:OpenEditFrame(loot.itemLink,
                              {id = loot.mobid, name = loot.mobname}, loot.chars);
