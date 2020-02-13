@@ -739,7 +739,8 @@ function PD_AddEditLootWinnerFrame()
     if (lootWinner ~= nil) then
         PulseDkpEditFrameCurrentWinner:SetText("Current winner: " .. lootWinner);
     end
-    PulseDkpRollFrame:Hide();
+    if PulseDkpRollersHtml then PulseDkpRollersHtml:Hide(); end
+
     PulseDkpEditFrameTitle:SetText("Edit loot winner");
 end
 
