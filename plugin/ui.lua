@@ -14,7 +14,7 @@ function PD_Frame()
         local PulseDkpMainFrame = CreateFrame("Frame", "PulseDkpMainFrame",
                                               UIParent);
         PulseDkpMainFrame:SetPoint("CENTER");
-        PulseDkpMainFrame:SetSize(800, 600);
+        PulseDkpMainFrame:SetSize(500, 600);
 
         PulseDkpMainFrame:SetBackdrop({
             bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
