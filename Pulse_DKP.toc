@@ -8,8 +8,10 @@
 
 plugin\textbox.lua
 plugin\json.lua
-plugin\ui.lua
-plugin\ui.xml
+ui\ui.lua
+ui\ui.xml
+ui\roll.lua
+ui\edit.lua
 init.lua
 module\dkp.lua
 module\storage_test.lua

@@ -44,6 +44,20 @@
         "GetLootSlotInfo",
         "IsAltKeyDown",
         "IsShiftKeyDown",
-        "GetLootSlotLink"
+        "GetLootSlotLink",
+        "PulseDkpEditWinnerFrame",
+        "UISpecialFrames",
+        "StaticPopupDialogs",
+        "StaticPopup_Show",
+        "PulseDkpNewLootWinnerDropDown",
+        "PulseDkpEditFrameCurrentWinner",
+        "PD_EditRollTitleFont",
+        "PulseDkpRollFrame",
+        "PulsDkpEndRollBtn",
+        "PulsDkpStartRollBtn",
+        "PulsDkpOffSpecRollBtn",
+        "PulseDkpRollersHtml",
+        "PulseDkpRollTitleFrame",
+        "PD_RollTitleFont"
     ]
 }
