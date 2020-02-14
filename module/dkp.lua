@@ -36,7 +36,8 @@ SlashCmdList.PULSE_DKP = function(msg)
 
     elseif cmd == 'clearraids' then
         ns:ClearRaids();
-
+    elseif cmd == 'clearcurrent' then
+        ns:ClearCurrent();
     elseif cmd == 'listraids' then
         ns:ListRaids();
 
@@ -199,6 +200,7 @@ function ns:EndRaid(msg)
     ns:UnRegisterLootReady();
 end
 function ns:ClearRaids() Pulse_DKP.raids = {}; end
+function ns:ClearCurrent() Pulse_DKP.currentRaid = {}; end
 function ns:ListRaids() KethoEditBox_Show(json.encode(Pulse_DKP.raids)); end
 
 function ns:GetCurrentRaid()
