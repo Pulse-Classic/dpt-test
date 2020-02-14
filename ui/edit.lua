@@ -168,7 +168,7 @@ function ns:AddNewLootWinnerDropDown()
                 info.text, info.arg1 = name, name;
                 info.checked = name == Pulse_DKP.lootWinner;
                 info.func = function()
-
+                    Pulse_DKP.newLootWinner = name;
                     UIDropDownMenu_SetText(PulseDkpNewLootWinnerDropDown,
                                            Pulse_DKP.newLootWinner);
                 end;
