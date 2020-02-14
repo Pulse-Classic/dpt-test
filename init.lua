@@ -9,7 +9,7 @@ function ns:init()
     Pulse_DKP.availableRaids = {};
     tinsert(Pulse_DKP.availableRaids, {name = "Onyxia's Lair", enabled = true});
     tinsert(Pulse_DKP.availableRaids, {name = "Molten Core", enabled = true});
-    tinsert(Pulse_DKP.availableRaids, {name = "Blackwing Lair", enabled = false});
+    tinsert(Pulse_DKP.availableRaids, {name = "Blackwing Lair", enabled = true});
     tinsert(Pulse_DKP.availableRaids, {name = "Zul'Gurub", enabled = false});
     tinsert(Pulse_DKP.availableRaids,
             {name = "Temple of Ahn'Qiraj", enabled = false});
