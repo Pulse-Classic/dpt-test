@@ -157,32 +157,25 @@ function ns:AddNewLootWinnerDropDown()
         UIDropDownMenu_SetText(PulseDkpNewLootWinnerDropDown,
                                Pulse_DKP.lootWinner);
     end
-    -- Create and bind the initialization function to the dropdown menu
-    local itemString, itemName = Pulse_DKP.currentItem:match(
-                                     "|H(.*)|h%[(.*)%]|h");
-    if Pulse_DKP.currentRaid.drops == nil or #Pulse_DKP.currentRaid.drops < 1 then
-        return;
-    end
-    for i = 1, #Pulse_DKP.currentRaid.drops do
-        local d = Pulse_DKP.currentRaid.drops[i];
-        if d.mob.id == Pulse_DKP.currentMob.id and d.item.item == itemName then
-            UIDropDownMenu_Initialize(PulseDkpNewLootWinnerDropDown,
-                                      function(self, level)
-                for index, value in pairs(d.chars) do
-                    local char = value.name;
-                    local info = UIDropDownMenu_CreateInfo();
-                    info.text, info.arg1 = char, char;
-                    info.checked = char == Pulse_DKP.lootWinner;
-                    info.func = function()
-                        Pulse_DKP.newLootWinner = char;
-                        UIDropDownMenu_SetText(PulseDkpNewLootWinnerDropDown,
-                                               Pulse_DKP.newLootWinner);
-                    end;
-                    UIDropDownMenu_AddButton(info, level);
-                end
-            end);
-            return;
+
+    UIDropDownMenu_Initialize(PulseDkpNewLootWinnerDropDown,
+                              function(self, level)
+        for i = 1, 40 do
+            local name, rank, subgroup, _level, class, fileName, zone, online,
+                  isDead, role, isML = GetRaidRosterInfo(i);
+            if name ~= nil then
+                local info = UIDropDownMenu_CreateInfo();
+                info.text, info.arg1 = name, name;
+                info.checked = name == Pulse_DKP.lootWinner;
+                info.func = function()
+
+                    UIDropDownMenu_SetText(PulseDkpNewLootWinnerDropDown,
+                                           Pulse_DKP.newLootWinner);
+                end;
+                UIDropDownMenu_AddButton(info, level);
+            end
         end
-    end
+    end);
+
     PulseDkpNewLootWinnerDropDown:Show();
 end
