@@ -1,10 +1,9 @@
 local _, ns = ...;
 
-function ns:OpenEditFrame(item, mob, winner)
+function ns:OpenEditFrame(item, winner)
     if not Pulse_DKP then return end
 
     Pulse_DKP.currentItem = item;
-    Pulse_DKP.currentMob = mob;
     Pulse_DKP.lootWinner = winner;
 
     if not PulseDkpEditWinnerFrame then
@@ -84,6 +83,7 @@ function ns:OpenEditFrame(item, mob, winner)
                         OnAccept = function()
                             ns:SetNewLootWinner();
                             PD_AddWinnersToFrame();
+                            ns:CloseEditFrame()
                         end,
                         timeout = 0,
                         whileDead = true,
@@ -111,6 +111,7 @@ function ns:OpenEditFrame(item, mob, winner)
                         OnAccept = function()
                             ns:DeleteWinner();
                             PD_AddWinnersToFrame();
+                            ns:CloseEditFrame();
                         end,
                         timeout = 0,
                         whileDead = true,
@@ -179,3 +180,4 @@ function ns:AddNewLootWinnerDropDown()
 
     PulseDkpNewLootWinnerDropDown:Show();
 end
+function ns:CloseEditFrame() PulseDkpEditWinnerFrame:Hide(); end

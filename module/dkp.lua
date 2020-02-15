@@ -178,8 +178,10 @@ function ns:DistributeLoot(item, winner, itemLink, mob)
     lootWinner.item = item;
     lootWinner.itemLink = itemLink;
     lootWinner.chars = winner;
-    lootWinner.mobid = mob.id;
-    lootWinner.mobname = mob.name;
+    if mob ~= nil then
+        lootWinner.mobid = mob.id;
+        lootWinner.mobname = mob.name;
+    end
     tinsert(Pulse_DKP.currentRaid.lootWinners, lootWinner);
     Pulse_DKP.raids[Pulse_DKP.currentRaid.index] = Pulse_DKP.currentRaid;
 
@@ -313,12 +315,13 @@ function ns:ParseLPStandings(lpString)
 end
 
 function ns:SetNewLootWinner()
-    if not Pulse_DKP or not Pulse_DKP.currentRaid then return end
+    if not Pulse_DKP or not Pulse_DKP.currentRaid or Pulse_DKP.newLootWinner ==
+        nil then return end
 
     for i = 1, #Pulse_DKP.currentRaid.lootWinners do
         local win = Pulse_DKP.currentRaid.lootWinners[i];
-        if win.mobid == Pulse_DKP.currentMob.id and win.itemLink ==
-            Pulse_DKP.currentItem and win.chars == Pulse_DKP.lootWinner then
+        if win.itemLink == Pulse_DKP.currentItem and win.chars ==
+            Pulse_DKP.lootWinner then
             Pulse_DKP.currentRaid.lootWinners[i].chars = Pulse_DKP.newLootWinner;
         end
     end
@@ -332,8 +335,8 @@ function ns:DeleteWinner()
 
     for i = 1, #Pulse_DKP.currentRaid.lootWinners do
         local win = Pulse_DKP.currentRaid.lootWinners[i];
-        if win.mobid == Pulse_DKP.currentMob.id and win.itemLink ==
-            Pulse_DKP.currentItem and win.chars == Pulse_DKP.lootWinner then
+        if win.itemLink == Pulse_DKP.currentItem and win.chars ==
+            Pulse_DKP.lootWinner then
             Pulse_DKP.currentRaid.lootWinners[i] = nil;
         end
     end
