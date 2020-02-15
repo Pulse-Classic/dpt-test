@@ -47,18 +47,22 @@ SlashCmdList.PULSE_DKP = function(msg)
         --     itemObj.itemString = itemString;
         --     itemObj.name = itemName;
         --     ns:AddDrop(msg, item);
-    elseif (cmd == 'kill' or cmd == 'wipe') then
-        Pulse_DKP.currentRaid.npc = args;
-        Pulse_DKP.currentRaid.chars = {};
+    elseif (cmd == 'wipe') then
+        if not Pulse_DKP.currentRaid.wipes then
+            Pulse_DKP.currentRaid.wipes = {};
+        end
+        local bossName = GetUnitName('target');
+        if not bossName then bossName = args end
+
+        local wipe = {boss = bossName, chars = {}};
         for i = 1, 40 do
-            local char = {};
-            char.name, char.rank = GetRaidRosterInfo(i);
-            if char.name ~= nil then
-                Pulse_DKP.currentRaid.chars[i] = {};
-                Pulse_DKP.currentRaid.chars[i].name, Pulse_DKP.currentRaid.chars[i]
-                    .rank = GetRaidRosterInfo(i);
+            local name = GetRaidRosterInfo(i);
+            if name ~= nil then
+                tinsert(wipe.chars, GetRaidRosterInfo(i))
             end
         end
+        tinsert(Pulse_DKP.currentRaid.wipes, wipe);
+        
     elseif (cmd == 'close') then
         ns:PD_CloseMainFrame();
     else
