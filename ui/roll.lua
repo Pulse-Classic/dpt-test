@@ -193,7 +193,11 @@ function RollerLinkClicked(...)
 
     local self, link, text, button = ...;
     if (link == nil) then return; end
-    Pulse_DKP.rollWinner = link;
+    if Pulse_DKP.rollWinner == link then
+        Pulse_DKP.rollWinner = nil;
+    else
+        Pulse_DKP.rollWinner = link;
+    end
     ns:UpdateRollersHtml();
 end
 function ns:RegisterRollFrameCloseButton()
