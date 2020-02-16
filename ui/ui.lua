@@ -272,6 +272,7 @@ function PD_LoadLastClicked()
     PulseDkpCurrentRaidFrame:Show();
 end
 function PD_BindCurrentRaidDetails()
+
     if Pulse_DKP.currentRaid == nil then return; end
     if Pulse_DKP.currentRaid.name ~= nil then
         PulseDkpCurrentRaid_TitleFont:SetText(
@@ -308,7 +309,7 @@ function PD_AddWinnersToFrame()
     if Pulse_DKP.currentRaid ~= nil and Pulse_DKP.currentRaid.lootWinners ~= nil then
         for i = 1, #Pulse_DKP.currentRaid.lootWinners do
             local d = Pulse_DKP.currentRaid.lootWinners[i];
-            local linktext = d.item.name .. '//';
+            local linktext = d.item.name:gsub("'", "&#39;") .. '//';
             linktext = linktext .. d.chars;
             h = h .. "<p><a href='" .. linktext .. "'>" .. d.chars .. ' won ' ..
                     d.itemLink .. "</a></p>";

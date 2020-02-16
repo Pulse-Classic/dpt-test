@@ -17,6 +17,16 @@ function ns:init()
             {name = "Ruins of Ahn'Qiraj", enabled = false});
     Pulse_DKP.version = 1;
     Pulse_DKP.channel = "RK_DKP";
+    if not Pulse_DKP.notify then Pulse_DKP.notify = {} end
+    Pulse_DKP.notify["CREATE"] = 1;
+    Pulse_DKP.notify["DROP"] = 2;
+    Pulse_DKP.notify["ROLL"] = 3;
+    Pulse_DKP.notify["ENTER_ROLL"] = 4;
+    Pulse_DKP.notify["LEAVE_ROLL"] = 5;
+    Pulse_DKP.notify["END"] = 6;
+    Pulse_DKP.notify["DROP_ATTENDEES"] = 7;
+    Pulse_DKP.notify["LOOT"] = 8;
+    
 end
 
 function ns:RegisterLootReady() frame:RegisterEvent('LOOT_READY'); end

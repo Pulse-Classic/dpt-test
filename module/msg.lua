@@ -8,7 +8,6 @@ function ns:notify(cmd, args)
     -- C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "WHISPER",
     --                             UnitName("player"));
 
-    
     C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "RAID");
 end
 function ns:messageRecieved(...)
@@ -17,13 +16,16 @@ function ns:messageRecieved(...)
     -- print(...);
     local arg = ns:parseMessage(text)
     if (arg == nil or arg.cmd == nil) then return end
+    local cmd = tonumber(arg.cmd);
+    if (cmd == Pulse_DKP.notify["CREATE"]) then -- create raid
 
-    if (arg.cmd == "1") then -- create raid
-
-    elseif arg.cmd == "2" then -- drop
+    elseif cmd == Pulse_DKP.notify["DROP"] then -- drop
         ns:UpdateDropFromOther(arg.args);
-        -- else if arg.cmd== 3 then --roll
-        -- else
+
+    elseif cmd == Pulse_DKP.notify["DROP_ATTENDEES"] then -- drop
+        print(arg);
+    elseif cmd == Pulse_DKP.notify["LOOT"] then -- drop
+        ns:UpdateWinnerFromOther(arg.args);
     end
 end
 
@@ -58,7 +60,7 @@ function ns:parseMessage(msg)
         end
         index = index + 1;
     end
-    obj.args = arg;    
+    obj.args = arg;
     return obj;
 end
 function ns:tableToString(tbl)

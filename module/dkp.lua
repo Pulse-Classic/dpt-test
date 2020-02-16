@@ -19,8 +19,7 @@ SlashCmdList.PULSE_DKP = function(msg)
         itemObj.name = itemName;
         itemObj.time = time();
 
-        if (itemObj.name ~= nil) then
-            print(itemObj);
+        if (itemObj.name ~= nil) then            
             ns:DistributeLoot(itemObj, charLink, item);
         end
 
@@ -62,7 +61,7 @@ SlashCmdList.PULSE_DKP = function(msg)
             end
         end
         tinsert(Pulse_DKP.currentRaid.wipes, wipe);
-        
+
     elseif (cmd == 'close') then
         ns:PD_CloseMainFrame();
     else
@@ -158,7 +157,7 @@ function ns:AddDrop(mob, item)
     copy.item = item.item;
     copy.texture = item.texture;
 
-    ns:notify(2, copy);
+    ns:notify(Pulse_DKP.notify["DROP"], copy);
 
     local updates = {mobid = mob, chars = {}};
     local index = 0;
@@ -166,7 +165,7 @@ function ns:AddDrop(mob, item)
         updates.chars[index] = drop.chars[i];
         index = index + 1;
         if (index == 5 or i == #drop.chars) then
-            ns:notify(10, updates);
+            ns:notify(Pulse_DKP.notify["DROP_ATTENDEES"], updates);
             updates.chars = {};
             index = 0;
         end
@@ -189,6 +188,17 @@ function ns:DistributeLoot(item, winner, itemLink, mob)
     tinsert(Pulse_DKP.currentRaid.lootWinners, lootWinner);
     Pulse_DKP.raids[Pulse_DKP.currentRaid.index] = Pulse_DKP.currentRaid;
 
+    local flattened = {};
+    flattened.itemLink = itemLink;
+    flattened.chars = winner;
+    if mob ~= nil then
+        flattened.mobid = mob.id;
+        flattened.mobid = mob.name;
+    end
+    flattened.itemTime = item.time;
+    flattened.itemName = item.name;
+    flattened.itemString = item.itemString;
+    ns:notify(Pulse_DKP.notify["LOOT"], flattened);
 end
 function ns:EndRaid(msg)
     if Pulse_DKP.currentRaid == nil then return; end
@@ -272,37 +282,7 @@ function ns:GenerateItem(itemName)
     end
 
 end
-function ns:UpdateDropFromOther(drop)
-    if drop == nil or Pulse_DKP.currentRaid == nil or ns:GetCurrentRaid() == nil then
-        return;
-    end
-    if Pulse_DKP.currentRaid.drops == nil then
-        Pulse_DKP.currentRaid.drops = {};
-    end
 
-    local mobid, mobname = drop.mobid, drop.mobname;
-    local dropIndex;
-
-    for i = 1, #Pulse_DKP.currentRaid.drops do
-        local d = Pulse_DKP.currentRaid.drops[i];
-        if d ~= nil and d.mob ~= nil and d.mob.id == mobid and d.item.item ==
-            drop.item then
-
-            dropIndex = i;
-            break
-        end
-    end
-    if (dropIndex ~= nil) then return; end
-
-    local item = {};
-    for key, value in pairs(drop) do
-        if (key ~= "mobid" and key ~= "mobname") then item[key] = value; end
-    end
-
-    local d = {mob = {name = mobname, id = mobid}, item = item};
-    tinsert(Pulse_DKP.currentRaid.drops, d);
-    PD_BindCurrentRaidDetails();
-end
 function ns:ParseLPStandings(lpString)
 
     if not lpString then return end
@@ -348,6 +328,60 @@ function ns:DeleteWinner()
     Pulse_DKP.newLootWinner = nil;
     Pulse_DKP.lootWinner = nil;
 
+end
+
+function ns:UpdateDropFromOther(drop)
+    if drop == nil or Pulse_DKP.currentRaid == nil or ns:GetCurrentRaid() == nil then
+        return;
+    end
+    if Pulse_DKP.currentRaid.drops == nil then
+        Pulse_DKP.currentRaid.drops = {};
+    end
+
+    local mobid, mobname = drop.mobid, drop.mobname;
+    local dropIndex;
+
+    for i = 1, #Pulse_DKP.currentRaid.drops do
+        local d = Pulse_DKP.currentRaid.drops[i];
+        if d ~= nil and d.mob ~= nil and d.mob.id == mobid and d.item.item ==
+            drop.item then
+
+            dropIndex = i;
+            break
+        end
+    end
+    if (dropIndex ~= nil) then return; end
+
+    local item = {};
+    for key, value in pairs(drop) do
+        if (key ~= "mobid" and key ~= "mobname") then item[key] = value; end
+    end
+
+    local d = {mob = {name = mobname, id = mobid}, item = item};
+    tinsert(Pulse_DKP.currentRaid.drops, d);
+    PD_BindCurrentRaidDetails();
+end
+function ns:UpdateWinnerFromOther(loot)
+    if loot == nil or Pulse_DKP.currentRaid == nil or ns:GetCurrentRaid() == nil then
+        return;
+    end
+    if Pulse_DKP.currentRaid.lootWinners == nil then
+        Pulse_DKP.currentRaid.lootWinners = {};
+    end
+
+    local lootWinner = {};
+    lootWinner.itemLink = loot.itemLink;
+    lootWinner.chars = loot.chars;
+    lootWinner.mobid = loot.mobid;
+    lootWinner.mobname = loot.mobname;
+    lootWinner.item = {
+        time = loot.itemTime,
+        name = loot.itemName,
+        itemString = loot.itemString
+    };
+    tinsert(Pulse_DKP.currentRaid.lootWinners, lootWinner);
+    Pulse_DKP.raids[Pulse_DKP.currentRaid.index] = Pulse_DKP.currentRaid;
+    PD_BindCurrentRaidDetails();
 end
 SLASH_PULSE_DKP1 = "/pd";
 
