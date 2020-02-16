@@ -25,9 +25,11 @@ function ns:messageRecieved(...)
     elseif cmd == Pulse_DKP.notify["DROP_ATTENDEES"] then -- drop
         print(arg);
     elseif cmd == Pulse_DKP.notify["LOOT"] then -- drop
-        ns:UpdateWinnerFromOther(arg.args);
+        ns:AddWinnerFromOther(arg.args);
     elseif cmd == Pulse_DKP.notify["DELETE_LOOT"] then -- drop
         ns:DeleteWinnerFromOther(arg.args);
+    elseif cmd == Pulse_DKP.notify["UPDATE_WINNER"] then -- drop        
+        ns:UpdateWinnerFromOther(arg.args);
     end
 end
 

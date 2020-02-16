@@ -6,7 +6,7 @@ local currentItem;
 SlashCmdList.PULSE_DKP = function(msg)
     local _, _, cmd, args = string.find(msg, "%s?(%w+)%s?(.*)");
 
-    if (cmd == 'donate' or cmd == 'loot') then
+    if (cmd == 'loot') then
 
         local _, _, item, charLink = string.find(args, "(.*)%s(%w+)");
         if (string.sub(item, 0, 1) ~= '|') then
@@ -304,9 +304,15 @@ function ns:SetNewLootWinner()
 
     for i = 1, #Pulse_DKP.currentRaid.lootWinners do
         local win = Pulse_DKP.currentRaid.lootWinners[i];
-        if win.itemLink == Pulse_DKP.currentItem and win.chars ==
+        if win ~= nil and win.itemLink == Pulse_DKP.currentItem and win.chars ==
             Pulse_DKP.lootWinner then
             Pulse_DKP.currentRaid.lootWinners[i].chars = Pulse_DKP.newLootWinner;
+            ns:notify(Pulse_DKP.notify["UPDATE_WINNER"], {
+                itemLink = win.itemLink,
+                lootWinner = Pulse_DKP.lootWinner,
+                newLootWinner = Pulse_DKP.newLootWinner
+            });
+            break
         end
     end
     Pulse_DKP.currentItem = nil;
@@ -367,7 +373,7 @@ function ns:UpdateDropFromOther(drop)
     tinsert(Pulse_DKP.currentRaid.drops, d);
     PD_BindCurrentRaidDetails();
 end
-function ns:UpdateWinnerFromOther(loot)
+function ns:AddWinnerFromOther(loot)
     if loot == nil or Pulse_DKP.currentRaid == nil or ns:GetCurrentRaid() == nil then
         return;
     end
@@ -405,6 +411,25 @@ function ns:DeleteWinnerFromOther(del)
     end
 
     Pulse_DKP.raids[Pulse_DKP.currentRaid.index] = Pulse_DKP.currentRaid;
+    PD_BindCurrentRaidDetails();
+end
+function ns:UpdateWinnerFromOther(loot)
+    if loot == nil or Pulse_DKP.currentRaid == nil or ns:GetCurrentRaid() == nil then
+        return;
+    end
+    if Pulse_DKP.currentRaid.lootWinners == nil then
+        Pulse_DKP.currentRaid.lootWinners = {};
+    end
+
+    for i = 1, #Pulse_DKP.currentRaid.lootWinners do
+        local win = Pulse_DKP.currentRaid.lootWinners[i];
+        if win ~= nil and win.itemLink == loot.currentItem and win.chars ==
+            loot.lootWinner then
+            Pulse_DKP.currentRaid.lootWinners[i].chars = loot.newLootWinner;
+            break
+        end
+    end
+
     PD_BindCurrentRaidDetails();
 end
 

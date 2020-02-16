@@ -158,7 +158,7 @@ function ns:AddNewLootWinnerDropDown()
         UIDropDownMenu_SetText(PulseDkpNewLootWinnerDropDown,
                                Pulse_DKP.lootWinner);
     end
-
+    local raiders = 0;
     UIDropDownMenu_Initialize(PulseDkpNewLootWinnerDropDown,
                               function(self, level)
         for i = 1, 40 do
@@ -174,7 +174,20 @@ function ns:AddNewLootWinnerDropDown()
                                            Pulse_DKP.newLootWinner);
                 end;
                 UIDropDownMenu_AddButton(info, level);
+                raiders = 1;
             end
+        end
+        if raiders == 0 then
+            local name = GetUnitName("PLAYER");
+            local info = UIDropDownMenu_CreateInfo();
+            info.text, info.arg1 = name, name;
+            info.checked = name == Pulse_DKP.lootWinner;
+            info.func = function()
+                Pulse_DKP.newLootWinner = name;
+                UIDropDownMenu_SetText(PulseDkpNewLootWinnerDropDown,
+                                       Pulse_DKP.newLootWinner);
+            end;
+            UIDropDownMenu_AddButton(info, level);
         end
     end);
 
