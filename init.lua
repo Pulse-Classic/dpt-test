@@ -26,6 +26,7 @@ function ns:init()
     Pulse_DKP.notify["END"] = 6;
     Pulse_DKP.notify["DROP_ATTENDEES"] = 7;
     Pulse_DKP.notify["LOOT"] = 8;
+    Pulse_DKP.notify["DELETE_LOOT"] =9;
     
 end
 

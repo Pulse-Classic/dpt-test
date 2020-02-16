@@ -309,11 +309,12 @@ function PD_AddWinnersToFrame()
     if Pulse_DKP.currentRaid ~= nil and Pulse_DKP.currentRaid.lootWinners ~= nil then
         for i = 1, #Pulse_DKP.currentRaid.lootWinners do
             local d = Pulse_DKP.currentRaid.lootWinners[i];
-            local linktext = d.item.name:gsub("'", "&#39;") .. '//';
-            linktext = linktext .. d.chars;
-            h = h .. "<p><a href='" .. linktext .. "'>" .. d.chars .. ' won ' ..
-                    d.itemLink .. "</a></p>";
-
+            if d ~= nil then
+                local linktext = d.item.name:gsub("'", "&#39;") .. '//';
+                linktext = linktext .. d.chars;
+                h = h .. "<p><a href='" .. linktext .. "'>" .. d.chars ..
+                        ' won ' .. d.itemLink .. "</a></p>";
+            end
         end
     end
 
@@ -380,7 +381,8 @@ function PD_WinnerLinkClicked(...)
     local itemName, charName = link:match("(.*)//(.*)");
     for i = 1, #Pulse_DKP.currentRaid.lootWinners do
         local loot = Pulse_DKP.currentRaid.lootWinners[i];
-        if (loot.item.name == itemName and loot.chars == charName) then
+        if (loot ~= nil and loot.item.name == itemName and loot.chars ==
+            charName) then
             ns:OpenEditFrame(loot.itemLink, loot.chars);
             break
         end

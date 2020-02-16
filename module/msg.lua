@@ -26,6 +26,8 @@ function ns:messageRecieved(...)
         print(arg);
     elseif cmd == Pulse_DKP.notify["LOOT"] then -- drop
         ns:UpdateWinnerFromOther(arg.args);
+    elseif cmd == Pulse_DKP.notify["DELETE_LOOT"] then -- drop
+        ns:DeleteWinnerFromOther(arg.args);
     end
 end
 

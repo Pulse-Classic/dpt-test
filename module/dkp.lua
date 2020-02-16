@@ -19,7 +19,7 @@ SlashCmdList.PULSE_DKP = function(msg)
         itemObj.name = itemName;
         itemObj.time = time();
 
-        if (itemObj.name ~= nil) then            
+        if (itemObj.name ~= nil) then
             ns:DistributeLoot(itemObj, charLink, item);
         end
 
@@ -319,11 +319,17 @@ function ns:DeleteWinner()
 
     for i = 1, #Pulse_DKP.currentRaid.lootWinners do
         local win = Pulse_DKP.currentRaid.lootWinners[i];
-        if win.itemLink == Pulse_DKP.currentItem and win.chars ==
+        if win ~= nil and win.itemLink == Pulse_DKP.currentItem and win.chars ==
             Pulse_DKP.lootWinner then
+            ns:notify(Pulse_DKP.notify["DELETE_LOOT"], {
+                itemLink = Pulse_DKP.currentItem,
+                lootWinner = Pulse_DKP.lootWinner
+            });
             Pulse_DKP.currentRaid.lootWinners[i] = nil;
+            break
         end
     end
+
     Pulse_DKP.currentItem = nil;
     Pulse_DKP.newLootWinner = nil;
     Pulse_DKP.lootWinner = nil;
@@ -383,5 +389,24 @@ function ns:UpdateWinnerFromOther(loot)
     Pulse_DKP.raids[Pulse_DKP.currentRaid.index] = Pulse_DKP.currentRaid;
     PD_BindCurrentRaidDetails();
 end
+function ns:DeleteWinnerFromOther(del)
+    if del == nil or Pulse_DKP.currentRaid == nil or ns:GetCurrentRaid() == nil then
+        return;
+    end
+    if Pulse_DKP.currentRaid.lootWinners == nil then return end
+
+    for i = 1, #Pulse_DKP.currentRaid.lootWinners do
+        local win = Pulse_DKP.currentRaid.lootWinners[i];
+        if win ~= nil and win.itemLink == del.itemLink and win.chars ==
+            del.lootWinner then
+            Pulse_DKP.currentRaid.lootWinners[i] = nil;
+            break
+        end
+    end
+
+    Pulse_DKP.raids[Pulse_DKP.currentRaid.index] = Pulse_DKP.currentRaid;
+    PD_BindCurrentRaidDetails();
+end
+
 SLASH_PULSE_DKP1 = "/pd";
 
