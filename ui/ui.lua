@@ -332,7 +332,7 @@ function PD_addDropsToFrame()
                 linktext = linktext .. m.id;
             end
 
-            h = h .. "<p><a href='" .. linktext .. "'>" .. d.item.item ..
+            h = h .. "<p><a href='" .. linktext:gsub("'", "&#39;") .. "'>" .. d.item.item ..
                     "</a></p>";
 
         end
