@@ -21,6 +21,7 @@ SlashCmdList.PULSE_DKP = function(msg)
 
         if (itemObj.name ~= nil) then
             ns:DistributeLoot(itemObj, charLink, item);
+            PD_AddWinnersToFrame();
         end
 
     elseif cmd == 'create' then
