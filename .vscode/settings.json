@@ -64,6 +64,7 @@
         "PulseDkpLPImportFrameScrollFrameEditBox",
         "PulseDkpDropsHtml",
         "PulseDkpWinnersHtml",
-        "PulseDkpLoadLastButton"
+        "PulseDkpLoadLastButton",
+        "getglobal"
     ]
 }

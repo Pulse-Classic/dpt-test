@@ -274,7 +274,7 @@ end
 function PD_BindCurrentRaidDetails()
 
     if Pulse_DKP.currentRaid == nil then return; end
-    if Pulse_DKP.currentRaid.name ~= nil then
+    if PulseDkpCurrentRaid_TitleFont and Pulse_DKP.currentRaid.name ~= nil then
         PulseDkpCurrentRaid_TitleFont:SetText(
             "Current raid details for:    " .. Pulse_DKP.currentRaid.name);
     end
