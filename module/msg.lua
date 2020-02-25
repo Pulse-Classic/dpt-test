@@ -56,11 +56,13 @@ function ns:parseMessage(msg)
     local index = 1;
     for token in string.gmatch(msg, "[^%//]+") do
 
-        if index == 1 then obj.cmd = token:gsub("cmd=", ""); end
-        if index == 2 then token = token:gsub("args=", ""); end
-        if index > 1 then
+        if index == 1 then
+            obj.cmd = token:gsub("cmd=", "");
+        elseif index == 2 then
+            token = token:gsub("args=", "");
+        elseif index > 1 then
             local prop, value = string.match(token, "(.*)=(.*)");
-            arg[prop] = value;
+            if prop then arg[prop] = value; end
         end
         index = index + 1;
     end
