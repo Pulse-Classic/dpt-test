@@ -5,15 +5,15 @@ function ns:notify(cmd, args)
 
     local msg = ns:packageMessage(cmd, args);
     -- send tell to yourself for debugging puposes
-    C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "WHISPER",
-                                UnitName("player"));
+    -- C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "WHISPER",
+    --                             UnitName("player"));
 
     C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "RAID");
 end
 function ns:messageRecieved(...)
     local prefix, text, channel, sender, target, zoneChannelID, localID, name,
           instanceID = ...;
-    print(...);
+    -- print(...);
     local arg = ns:parseMessage(text)
     if (arg == nil or arg.cmd == nil) then return end
     local cmd = tonumber(arg.cmd);
