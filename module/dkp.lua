@@ -104,8 +104,7 @@ function ns:CreateRaid(args)
     newRaid.startedOn = nil;
     Pulse_DKP.raids[newRaid.index] = newRaid;
     Pulse_DKP.currentRaid = newRaid;
-
-    -- ns:notify(1, Pulse_DKP.currentRaid);    
+    ns:notify(Pulse_DKP.notify["CREATE"], newRaid);
 end
 
 function ns:StartRaid()
@@ -434,5 +433,40 @@ function ns:UpdateWinnerFromOther(loot)
     PD_BindCurrentRaidDetails();
 end
 
+function ns:CreateRaidFromOtherMessageRecieved(raid)
+    if Pulse_DKP.currentRaid and Pulse_DKP.currentRaid.closedOn == nil then
+        if not StaticPopupDialogs["CONFIRM_OVERWRITE_RAID"] then
+            StaticPopupDialogs["CONFIRM_OVERWRITE_RAID"] =
+                {
+                    text = raid.createdBy .. " has started a new raid for " ..
+                        raid.name ..
+                        ".\n Would you like to use this as your current, active raid?",
+                    button1 = "Yes",
+                    button2 = "No",
+                    OnAccept = function()
+                        ns:CreateRaidFromOther(raid);
+                    end,
+                    timeout = 0,
+                    whileDead = true,
+                    hideOnEscape = true,
+                    preferredIndex = 3 -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
+                }
+        end
+        StaticPopup_Show("CONFIRM_OVERWRITE_RAID");
+
+    else
+        ns:CreateRaidFromOther(raid);
+    end
+end
+function ns:CreateRaidFromOther(raid)
+    local index = 1;
+    if (Pulse_DKP.raids ~= nil) then index = #Pulse_DKP.raids + 1; end
+    if (Pulse_DKP.raids == nil) then Pulse_DKP.raids = {}; end
+
+    raid.index = index;
+    Pulse_DKP.raids[raid.index] = raid;
+    Pulse_DKP.currentRaid = raid;
+    PD_BindCurrentRaidDetails();
+end
 SLASH_PULSE_DKP1 = "/pd";
 

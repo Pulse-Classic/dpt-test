@@ -5,30 +5,31 @@ function ns:notify(cmd, args)
 
     local msg = ns:packageMessage(cmd, args);
     -- send tell to yourself for debugging puposes
-    -- C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "WHISPER",
-    --                             UnitName("player"));
+    C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "WHISPER",
+                                UnitName("player"));
 
     C_ChatInfo.SendAddonMessage(Pulse_DKP.channel, msg, "RAID");
 end
 function ns:messageRecieved(...)
     local prefix, text, channel, sender, target, zoneChannelID, localID, name,
           instanceID = ...;
-    -- print(...);
+    print(...);
     local arg = ns:parseMessage(text)
     if (arg == nil or arg.cmd == nil) then return end
     local cmd = tonumber(arg.cmd);
-    if (cmd == Pulse_DKP.notify["CREATE"]) then -- create raid
+    if (cmd == Pulse_DKP.notify["CREATE"]) then
+        ns:CreateRaidFromOtherMessageRecieved(arg.args);
 
-    elseif cmd == Pulse_DKP.notify["DROP"] then -- drop
+    elseif cmd == Pulse_DKP.notify["DROP"] then
         ns:UpdateDropFromOther(arg.args);
 
-    elseif cmd == Pulse_DKP.notify["DROP_ATTENDEES"] then -- drop
+    elseif cmd == Pulse_DKP.notify["DROP_ATTENDEES"] then
         print(arg);
-    elseif cmd == Pulse_DKP.notify["LOOT"] then -- drop
+    elseif cmd == Pulse_DKP.notify["LOOT"] then
         ns:AddWinnerFromOther(arg.args);
-    elseif cmd == Pulse_DKP.notify["DELETE_LOOT"] then -- drop
+    elseif cmd == Pulse_DKP.notify["DELETE_LOOT"] then
         ns:DeleteWinnerFromOther(arg.args);
-    elseif cmd == Pulse_DKP.notify["UPDATE_WINNER"] then -- drop        
+    elseif cmd == Pulse_DKP.notify["UPDATE_WINNER"] then
         ns:UpdateWinnerFromOther(arg.args);
     end
 end
@@ -55,13 +56,14 @@ function ns:parseMessage(msg)
     local arg = {};
     local index = 1;
     for token in string.gmatch(msg, "[^%//]+") do
-
+        local t = token;
         if index == 1 then
             obj.cmd = token:gsub("cmd=", "");
         elseif index == 2 then
-            token = token:gsub("args=", "");
-        elseif index > 1 then
-            local prop, value = string.match(token, "(.*)=(.*)");
+            t = token:gsub("args=", "");
+        end
+        if index > 1 then
+            local prop, value = string.match(t, "(.*)=(.*)");
             if prop then arg[prop] = value; end
         end
         index = index + 1;
