@@ -161,14 +161,12 @@ function ns:AddDrop(mob, item)
     ns:notify(Pulse_DKP.notify["DROP"], copy);
 
     local updates = {mobid = mob, chars = {}};
-    local index = 0;
+
     for i = 1, #drop.chars do
-        updates.chars[index] = drop.chars[i];
-        index = index + 1;
-        if (index == 5 or i == #drop.chars) then
+        tinsert(updates.chars, drop.chars[i]);
+        if (i % 5 == 0 or i == #drop.chars) then
             ns:notify(Pulse_DKP.notify["DROP_ATTENDEES"], updates);
             updates.chars = {};
-            index = 0;
         end
     end
 end
@@ -467,6 +465,27 @@ function ns:CreateRaidFromOther(raid)
     raid.index = index;
     Pulse_DKP.raids[raid.index] = raid;
     Pulse_DKP.currentRaid = raid;
+    PD_BindCurrentRaidDetails();
+end
+
+function ns:AddDropAttendeesFromOther(update)
+
+    if Pulse_DKP.currentRaid == nil or Pulse_DKP.currentRaid.drops == nil then
+        return;
+    end
+
+    local drop = nil;
+    local index;
+    for i = 1, #Pulse_DKP.currentRaid.drops do
+        if drop.mob.id == update.mobid then
+            drop = Pulse_DKP.currentRaid.drops[i];
+            index = i;
+            break
+        end
+    end
+    if not drop then return; end
+    tinsert(Pulse_DKP.currentRaid.drops[index], update.char);
+    Pulse_DKP.raids[Pulse_DKP.currentRaid.index] = Pulse_DKP.currentRaid;
     PD_BindCurrentRaidDetails();
 end
 SLASH_PULSE_DKP1 = "/pd";

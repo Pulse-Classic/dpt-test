@@ -25,12 +25,17 @@ function ns:messageRecieved(...)
 
     elseif cmd == Pulse_DKP.notify["START"] then
         ns:StartRaid();
+
     elseif cmd == Pulse_DKP.notify["DROP_ATTENDEES"] then
-        print(arg);
+        -- print(...)
+        ns:AddDropAttendeesFromOther(arg.args);
+
     elseif cmd == Pulse_DKP.notify["LOOT"] then
         ns:AddWinnerFromOther(arg.args);
+
     elseif cmd == Pulse_DKP.notify["DELETE_LOOT"] then
         ns:DeleteWinnerFromOther(arg.args);
+
     elseif cmd == Pulse_DKP.notify["UPDATE_WINNER"] then
         ns:UpdateWinnerFromOther(arg.args);
     end
