@@ -29,7 +29,7 @@ SlashCmdList.PULSE_DKP = function(msg)
     elseif cmd == 'ps' then
         ns:AddLPImportFrame();
     elseif cmd == 'start' then
-        ns:StartRaid();
+        ns:StartRaid(true);
 
     elseif cmd == 'end' then
         ns:EndRaid(msg);
@@ -107,7 +107,7 @@ function ns:CreateRaid(args)
     ns:notify(Pulse_DKP.notify["CREATE"], newRaid);
 end
 
-function ns:StartRaid()
+function ns:StartRaid(notify)
     if Pulse_DKP.currentRaid == nil then return; end
 
     Pulse_DKP.currentRaid.startingChars = {};
@@ -124,6 +124,7 @@ function ns:StartRaid()
     Pulse_DKP.currentRaid.startedOn = date("!%Y-%m-%d %H:%M");
     Pulse_DKP.raids[Pulse_DKP.currentRaid.index] = Pulse_DKP.currentRaid;
     ns:RegisterLootReady();
+    if notify and notify == true then ns:notify(Pulse_DKP.notify["START"]); end
 end
 
 function ns:AddDrop(mob, item)

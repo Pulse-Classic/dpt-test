@@ -23,6 +23,8 @@ function ns:messageRecieved(...)
     elseif cmd == Pulse_DKP.notify["DROP"] then
         ns:UpdateDropFromOther(arg.args);
 
+    elseif cmd == Pulse_DKP.notify["START"] then
+        ns:StartRaid();
     elseif cmd == Pulse_DKP.notify["DROP_ATTENDEES"] then
         print(arg);
     elseif cmd == Pulse_DKP.notify["LOOT"] then

@@ -32,7 +32,7 @@ function ns:init()
     Pulse_DKP.notify["LOOT"] = 8;
     Pulse_DKP.notify["DELETE_LOOT"] = 9;
     Pulse_DKP.notify["UPDATE_WINNER"] = 10;
-    Pulse_DKP.notify["CREATE_ADD_PLAYERS"] = 11;
+    Pulse_DKP.notify["START"] = 11;
 
 end
 

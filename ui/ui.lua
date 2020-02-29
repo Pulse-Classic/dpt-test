@@ -140,7 +140,7 @@ function PD_addCurrentRaidFrame()
     PD_StartRaidBtn:SetText("Start raid");
 
     PD_StartRaidBtn:SetScript("OnMouseUp", function(self, button)
-        ns:StartRaid();
+        ns:StartRaid(true);
         PulseDkpStartRaidButton:Hide();
         PulseDkpEndRaidButton:Show();
         PD_BindCurrentRaidDetails();
@@ -332,8 +332,8 @@ function PD_addDropsToFrame()
                 linktext = linktext .. m.id;
             end
 
-            h = h .. "<p><a href='" .. linktext:gsub("'", "&#39;") .. "'>" .. d.item.item ..
-                    "</a></p>";
+            h = h .. "<p><a href='" .. linktext:gsub("'", "&#39;") .. "'>" ..
+                    d.item.item .. "</a></p>";
 
         end
     end
